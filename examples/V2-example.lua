@@ -1,7 +1,7 @@
 -- UI Library Demo Script
 -- Zeigt alle Funktionen und Komponenten der Bibliothek
 
-local UILibrary = loadstring(game:HttpGet(""))()
+local UILibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/lzhenweiDev/Nebula-UI/refs/heads/main/V2.lua"))()
 
 -- Hauptfenster erstellen
 local Window = UILibrary:CreateWindow({
