@@ -30,20 +30,20 @@ local FONT_BOLD = Enum.Font.GothamBold
 -- =====================================================================
 local Themes = {
     Amethyst = {
-        Background = Color3.fromRGB(9, 6, 28),
-        Background2 = Color3.fromRGB(18, 10, 45),
-        Surface = Color3.fromRGB(45, 28, 80),
-        Surface2 = Color3.fromRGB(50, 32, 95),
-        Text = Color3.fromRGB(245, 244, 251),
-        TextDim = Color3.fromRGB(170, 162, 193),
-        Accent = Color3.fromRGB(145, 100, 255),
-        AccentHover = Color3.fromRGB(195, 155, 255),
-        AccentGlow = Color3.fromRGB(225, 190, 255),
+        Background = Color3.fromRGB(35, 18, 95),
+        Background2 = Color3.fromRGB(45, 25, 140),
+        Surface = Color3.fromRGB(75, 45, 190),
+        Surface2 = Color3.fromRGB(60, 35, 160),
+        Text = Color3.fromRGB(250, 248, 255),
+        TextDim = Color3.fromRGB(190, 180, 210),
+        Accent = Color3.fromRGB(185, 135, 255),
+        AccentHover = Color3.fromRGB(225, 185, 255),
+        AccentGlow = Color3.fromRGB(245, 215, 255),
         Danger = Color3.fromRGB(225, 90, 110),
-        Success = Color3.fromRGB(105, 220, 145),
-        Warning = Color3.fromRGB(255, 195, 80),
-        Border = Color3.fromRGB(105, 75, 160),
-        Shadow = Color3.fromRGB(4, 3, 12),
+        Success = Color3.fromRGB(115, 235, 160),
+        Warning = Color3.fromRGB(255, 205, 95),
+        Border = Color3.fromRGB(145, 110, 205),
+        Shadow = Color3.fromRGB(10, 5, 30),
         Gloss = true,
     },
     Dark = {
@@ -485,7 +485,7 @@ function Window.new(config)
     -- Main Frame
     self.Main = Create("Frame", {
         Parent = self.SG,
-        BackgroundColor3 = CurrentTheme.Background,
+        BackgroundColor3 = CurrentTheme.Surface,
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, -275, 0.5, -200),
