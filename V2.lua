@@ -15,6 +15,14 @@ local TextService = game:GetService("TextService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
+local function GetGuiParent()
+    if Players.LocalPlayer then
+        local playerGui = Players.LocalPlayer:FindFirstChild("PlayerGui") or Players.LocalPlayer:WaitForChild("PlayerGui")
+        return playerGui or CoreGui
+    end
+    return CoreGui
+end
+
 -- =====================================================================
 -- CONSTANTS
 -- =====================================================================
@@ -248,7 +256,7 @@ local function ShowLoadingScreen(config)
     
     local SG = Create("ScreenGui", {
         Name = "NebulaLoading",
-        Parent = CoreGui,
+        Parent = GetGuiParent(),
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     })
@@ -477,7 +485,7 @@ function Window.new(config)
     
     self.SG = Create("ScreenGui", {
         Name = "NebulaUI_" .. self.Title,
-        Parent = CoreGui,
+        Parent = GetGuiParent(),
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     })
