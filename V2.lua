@@ -30,20 +30,20 @@ local FONT_BOLD = Enum.Font.GothamBold
 -- =====================================================================
 local Themes = {
     Amethyst = {
-        Background = Color3.fromRGB(40, 20, 140),
-        Background2 = Color3.fromRGB(55, 26, 190),
-        Surface = Color3.fromRGB(85, 55, 235),
-        Surface2 = Color3.fromRGB(70, 40, 180),
+        Background = Color3.fromRGB(24, 10, 80),
+        Background2 = Color3.fromRGB(35, 14, 110),
+        Surface = Color3.fromRGB(65, 35, 170),
+        Surface2 = Color3.fromRGB(95, 60, 220),
         Text = Color3.fromRGB(245, 245, 255),
-        TextDim = Color3.fromRGB(220, 210, 235),
-        Accent = Color3.fromRGB(190, 140, 255),
-        AccentHover = Color3.fromRGB(235, 200, 255),
+        TextDim = Color3.fromRGB(210, 200, 235),
+        Accent = Color3.fromRGB(180, 120, 255),
+        AccentHover = Color3.fromRGB(235, 190, 255),
         AccentGlow = Color3.fromRGB(250, 230, 255),
         Danger = Color3.fromRGB(225, 90, 110),
         Success = Color3.fromRGB(115, 235, 160),
         Warning = Color3.fromRGB(255, 205, 95),
-        Border = Color3.fromRGB(165, 120, 240),
-        Shadow = Color3.fromRGB(15, 5, 40),
+        Border = Color3.fromRGB(145, 105, 215),
+        Shadow = Color3.fromRGB(8, 4, 30),
         Gloss = true,
     },
     Dark = {
@@ -485,7 +485,7 @@ function Window.new(config)
     -- Main Frame
     self.Main = Create("Frame", {
         Parent = self.SG,
-        BackgroundColor3 = CurrentTheme.Surface,
+        BackgroundColor3 = CurrentTheme.Background,
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, -275, 0.5, -200),
@@ -494,15 +494,15 @@ function Window.new(config)
         ZIndex = 1,
     })
     AddCorner(self.Main, 12)
-    AddShadow(self.Main, 0.5, 10)
-    Create("UIStroke", {Parent = self.Main, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.7})
+    AddShadow(self.Main, 0.45, 12)
+    Create("UIStroke", {Parent = self.Main, Color = CurrentTheme.Border, Thickness = 2, Transparency = 0.6})
     if CurrentTheme.Gloss then AddGloss(self.Main) end
-    Create("UIGradient", {Parent = self.Main, Color = ColorSequence.new({CurrentTheme.Background, CurrentTheme.Surface2}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.7, 0.2), NumberSequenceKeypoint.new(1, 0.4)}), Rotation = 90})
+    Create("UIGradient", {Parent = self.Main, Color = ColorSequence.new({CurrentTheme.Background, CurrentTheme.Surface2}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.55, 0.14), NumberSequenceKeypoint.new(1, 0.35)}), Rotation = 90})
     
     -- Title Bar
     self.TitleBar = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundColor3 = CurrentTheme.Surface2,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 42),
         ZIndex = 2,
@@ -573,7 +573,7 @@ function Window.new(config)
     -- Sidebar
     self.TabContainer = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundColor3 = CurrentTheme.Surface,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
         Size = UDim2.new(0, 140, 1, -42),
@@ -597,7 +597,7 @@ function Window.new(config)
     -- Content
     self.ContentArea = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Surface,
+        BackgroundColor3 = CurrentTheme.Background2,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 140, 0, 42),
         Size = UDim2.new(1, -140, 1, -42),
@@ -744,8 +744,9 @@ function Nebula.CreateSection(tab, config)
     
     local section = Create("Frame", {
         Parent = page,
-        BackgroundColor3 = CurrentTheme.Surface2,
-        BorderSizePixel = 0,
+        BackgroundColor3 = CurrentTheme.Background,
+        BorderColor3 = CurrentTheme.Border,
+        BorderSizePixel = 1,
         Size = UDim2.new(1, 0, 0, name ~= "" and 28 or 0),
         ZIndex = 1,
     })
