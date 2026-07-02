@@ -30,20 +30,20 @@ local FONT_BOLD = Enum.Font.GothamBold
 -- =====================================================================
 local Themes = {
     Amethyst = {
-        Background = Color3.fromRGB(35, 18, 95),
-        Background2 = Color3.fromRGB(45, 25, 140),
-        Surface = Color3.fromRGB(75, 45, 190),
-        Surface2 = Color3.fromRGB(60, 35, 160),
-        Text = Color3.fromRGB(250, 248, 255),
-        TextDim = Color3.fromRGB(190, 180, 210),
-        Accent = Color3.fromRGB(185, 135, 255),
-        AccentHover = Color3.fromRGB(225, 185, 255),
-        AccentGlow = Color3.fromRGB(245, 215, 255),
+        Background = Color3.fromRGB(40, 20, 140),
+        Background2 = Color3.fromRGB(55, 26, 190),
+        Surface = Color3.fromRGB(85, 55, 235),
+        Surface2 = Color3.fromRGB(70, 40, 180),
+        Text = Color3.fromRGB(245, 245, 255),
+        TextDim = Color3.fromRGB(220, 210, 235),
+        Accent = Color3.fromRGB(190, 140, 255),
+        AccentHover = Color3.fromRGB(235, 200, 255),
+        AccentGlow = Color3.fromRGB(250, 230, 255),
         Danger = Color3.fromRGB(225, 90, 110),
         Success = Color3.fromRGB(115, 235, 160),
         Warning = Color3.fromRGB(255, 205, 95),
-        Border = Color3.fromRGB(145, 110, 205),
-        Shadow = Color3.fromRGB(10, 5, 30),
+        Border = Color3.fromRGB(165, 120, 240),
+        Shadow = Color3.fromRGB(15, 5, 40),
         Gloss = true,
     },
     Dark = {
@@ -573,7 +573,7 @@ function Window.new(config)
     -- Sidebar
     self.TabContainer = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Surface2,
+        BackgroundColor3 = CurrentTheme.Background2,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
         Size = UDim2.new(0, 140, 1, -42),
@@ -597,7 +597,7 @@ function Window.new(config)
     -- Content
     self.ContentArea = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundColor3 = CurrentTheme.Surface,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 140, 0, 42),
         Size = UDim2.new(1, -140, 1, -42),
