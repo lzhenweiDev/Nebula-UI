@@ -1,5 +1,5 @@
 -- 🌟 NEBULA UI DEMO - ALL FEATURES
-local Nebula = loadstring(game:HttpGet("URL"))()
+local Nebula = loadstring(game:HttpGet("https://raw.githubusercontent.com/lzhenweiDev/Nebula-UI/refs/heads/main/V2.lua"))()
 
 local Window = Nebula.CreateWindow({
     Title = "Nebula UI Demo",
