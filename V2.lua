@@ -39,21 +39,21 @@ local FONT_BOLD = Enum.Font.GothamBold
 -- =====================================================================
 local Themes = {
     Amethyst = {
-        Background = Color3.fromRGB(10, 8, 32),
-        Background2 = Color3.fromRGB(22, 12, 70),
-        Surface = Color3.fromRGB(42, 24, 108),
-        Surface2 = Color3.fromRGB(78, 40, 196),
+        Background = Color3.fromRGB(14, 10, 40),
+        Background2 = Color3.fromRGB(26, 16, 80),
+        Surface = Color3.fromRGB(45, 30, 110),
+        Surface2 = Color3.fromRGB(92, 54, 214),
         Text = Color3.fromRGB(245, 245, 255),
-        TextDim = Color3.fromRGB(195, 190, 225),
-        Accent = Color3.fromRGB(190, 145, 255),
-        AccentHover = Color3.fromRGB(220, 185, 255),
-        AccentGlow = Color3.fromRGB(240, 230, 255),
+        TextDim = Color3.fromRGB(200, 192, 230),
+        Accent = Color3.fromRGB(200, 155, 255),
+        AccentHover = Color3.fromRGB(230, 190, 255),
+        AccentGlow = Color3.fromRGB(245, 235, 255),
         Danger = Color3.fromRGB(220, 90, 110),
         Success = Color3.fromRGB(110, 220, 145),
         Warning = Color3.fromRGB(255, 200, 90),
-        Border = Color3.fromRGB(130, 95, 200),
-        Shadow = Color3.fromRGB(3, 3, 18),
-        Gloss = false,
+        Border = Color3.fromRGB(145, 105, 220),
+        Shadow = Color3.fromRGB(5, 4, 24),
+        Gloss = true,
     },
     Dark = {
         Background = Color3.fromRGB(18, 18, 28),
@@ -587,7 +587,7 @@ function Window.new(config)
     -- Sidebar
     self.TabContainer = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Surface,
+        BackgroundColor3 = CurrentTheme.Background,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
         Size = UDim2.new(0, 140, 1, -42),
@@ -611,7 +611,7 @@ function Window.new(config)
     -- Content
     self.ContentArea = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background,
+        BackgroundColor3 = CurrentTheme.Background2,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 140, 0, 42),
         Size = UDim2.new(1, -140, 1, -42),
@@ -621,7 +621,7 @@ function Window.new(config)
     
     self.PageContainer = Create("Frame", {
         Parent = self.ContentArea,
-        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundColor3 = CurrentTheme.Background,
         BackgroundTransparency = 0,
         Size = UDim2.new(1, -16, 1, -16),
         Position = UDim2.new(0, 8, 0, 8),
@@ -696,7 +696,7 @@ function Window:CreateTab(name, icon)
     
     local page = Create("ScrollingFrame", {
         Parent = self.PageContainer,
-        BackgroundColor3 = CurrentTheme.Surface2,
+        BackgroundColor3 = CurrentTheme.Surface,
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
