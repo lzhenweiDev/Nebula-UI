@@ -19,6 +19,8 @@ local Players = game:GetService("Players")
 -- CONSTANTS
 -- =====================================================================
 local TWEEN_SPEED = 0.16
+local HOVER_SPEED = 0.12
+local CLICK_SPEED = 0.08
 local CORNER_RADIUS = 8
 local FONT = Enum.Font.Gotham
 local FONT_BOLD = Enum.Font.GothamBold
@@ -255,6 +257,7 @@ local function ShowLoadingScreen(config)
         Position = UDim2.new(0.5, -150, 0.5, -80),
         Size = UDim2.new(0, 300, 0, 160),
         ZIndex = 1000,
+        BackgroundTransparency = 1,
     })
     AddCorner(container, 14)
     AddShadow(container, 0.4, 10)
@@ -335,6 +338,8 @@ local function ShowLoadingScreen(config)
     })
     
     -- Animate
+    Tween(bg, {BackgroundTransparency = 0.55}, 0.25)
+    Tween(container, {BackgroundTransparency = 0}, 0.25)
     local stepTime = duration / #steps
     for i = 1, #steps do
         task.delay((i - 1) * stepTime, function()
@@ -430,11 +435,15 @@ local function ShowNotification(window, config)
         ZIndex = 1001,
     })
     
-    Tween(notif, {Position = UDim2.new(1, -10, 0.85, -10), Size = UDim2.new(0, 300, 0, 50)}, 0.3, Enum.EasingStyle.Back)
+    notif.Position = UDim2.new(1, 30, 0.85, -10)
+    notif.BackgroundTransparency = 1
+    Tween(notif, {Position = UDim2.new(1, -10, 0.85, -10), BackgroundTransparency = 0}, 0.34, Enum.EasingStyle.Back)
+    Tween(notif, {Size = UDim2.new(0, 300, 0, 50)}, 0.28, Enum.EasingStyle.Back)
     
     task.delay(duration, function()
-        Tween(notif, {Position = UDim2.new(1, 10, 0.85, -10), Size = UDim2.new(0, 300, 0, 0)}, 0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-        task.wait(0.2)
+        Tween(notif, {Position = UDim2.new(1, 30, 0.85, -10), BackgroundTransparency = 1}, 0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+        Tween(notif, {Size = UDim2.new(0, 300, 0, 0)}, 0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+        task.wait(0.22)
         notif:Destroy()
     end)
 end
@@ -464,6 +473,7 @@ function Window.new(config)
     self.Main = Create("Frame", {
         Parent = self.SG,
         BackgroundColor3 = CurrentTheme.Background,
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, -275, 0.5, -200),
         Size = UDim2.new(0, 550, 0, 400),
@@ -590,14 +600,14 @@ function Window.new(config)
     
     -- Animate in
     self.Main.Size = UDim2.new(0, 0, 0, 0)
-    Tween(self.Main, {Size = UDim2.new(0, 550, 0, 400)}, 0.35, Enum.EasingStyle.Back)
+    Tween(self.Main, {Size = UDim2.new(0, 550, 0, 400), BackgroundTransparency = 0}, 0.35, Enum.EasingStyle.Back)
     
     return self
 end
 
 function Window:Destroy()
-    Tween(self.Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-    task.wait(0.15)
+    Tween(self.Main, {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}, 0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+    task.wait(0.18)
     self.SG:Destroy()
 end
 
@@ -631,10 +641,10 @@ function Window:CreateTab(name, icon)
     if CurrentTheme.Gloss then AddGloss(tabBtn) end
     
     tabBtn.MouseEnter:Connect(function()
-        if self.currentTab ~= name then Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Surface2}, 0.1) end
+        if self.currentTab ~= name then Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Surface2}, HOVER_SPEED) end
     end)
     tabBtn.MouseLeave:Connect(function()
-        if self.currentTab ~= name then Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Surface}, 0.1) end
+        if self.currentTab ~= name then Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Surface}, HOVER_SPEED) end
     end)
     
     local page = Create("ScrollingFrame", {
@@ -666,13 +676,16 @@ function Window:CreateTab(name, icon)
     
     tabBtn.MouseButton1Click:Connect(function()
         for _, p in pairs(self.Pages) do p.Visible = false end
-        for _, t in pairs(self.Tabs) do Tween(t, {BackgroundColor3 = CurrentTheme.Surface}, 0.15) end
+        for _, t in pairs(self.Tabs) do Tween(t, {BackgroundColor3 = CurrentTheme.Surface}, HOVER_SPEED) end
+        page.BackgroundTransparency = 1
         page.Visible = true
-        Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Accent}, 0.15)
+        Tween(page, {BackgroundTransparency = 0}, 0.2)
+        Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Accent}, HOVER_SPEED)
         self.currentTab = name
     end)
     
     if #self.Tabs == 0 then
+        page.BackgroundTransparency = 0
         page.Visible = true
         Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Accent}, 0.1)
         self.currentTab = name
@@ -798,11 +811,11 @@ function Nebula.CreateToggle(page, config)
     
     local function update()
         if state then
-            Tween(toggleBg, {BackgroundColor3 = CurrentTheme.Success}, 0.15)
-            Tween(toggleDot, {Position = UDim2.new(1, -17, 0.5, -7)}, 0.15)
+            Tween(toggleBg, {BackgroundColor3 = CurrentTheme.Success}, HOVER_SPEED)
+            Tween(toggleDot, {Position = UDim2.new(1, -17, 0.5, -7)}, HOVER_SPEED)
         else
-            Tween(toggleBg, {BackgroundColor3 = Color3.fromRGB(60, 60, 70)}, 0.15)
-            Tween(toggleDot, {Position = UDim2.new(0, 3, 0.5, -7)}, 0.15)
+            Tween(toggleBg, {BackgroundColor3 = Color3.fromRGB(60, 60, 70)}, HOVER_SPEED)
+            Tween(toggleDot, {Position = UDim2.new(0, 3, 0.5, -7)}, HOVER_SPEED)
         end
     end
     
@@ -842,9 +855,9 @@ function Nebula.CreateButton(page, config)
     btn.MouseLeave:Connect(function() Tween(btn, {BackgroundColor3 = color}, 0.12) end)
     
     btn.MouseButton1Click:Connect(function()
-        Tween(btn, {Size = UDim2.new(0.95, 0, 0, 32)}, 0.05)
-        task.wait(0.05)
-        Tween(btn, {Size = UDim2.new(1, 0, 0, 36)}, 0.05)
+        Tween(btn, {Size = UDim2.new(0.98, 0, 0, 34)}, CLICK_SPEED, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+        task.wait(CLICK_SPEED)
+        Tween(btn, {Size = UDim2.new(1, 0, 0, 36)}, CLICK_SPEED, Enum.EasingStyle.Sine)
         callback()
     end)
     
@@ -924,7 +937,7 @@ function Nebula.CreateSlider(page, config)
     local function update(val)
         val = math.clamp(tonumber(val) or min, min, max)
         currentValue = val
-        sliderFill.Size = UDim2.new((val - min) / (max - min), 0, 1, 0)
+        Tween(sliderFill, {Size = UDim2.new((val - min) / (max - min), 0, 1, 0)}, HOVER_SPEED)
         label.Text = name .. ": " .. val .. suffix
         callback(val)
         events.OnChanged:Fire(val)
@@ -1023,18 +1036,26 @@ function Nebula.CreateDropdown(page, config)
                 TextSize = 10, AutoButtonColor = false, ZIndex = 11,
             })
             AddCorner(optBtn, 4)
-            optBtn.MouseEnter:Connect(function() Tween(optBtn, {BackgroundColor3 = CurrentTheme.Surface}, 0.1) end)
-            optBtn.MouseLeave:Connect(function() Tween(optBtn, {BackgroundColor3 = CurrentTheme.Surface2}, 0.1) end)
+            optBtn.MouseEnter:Connect(function() Tween(optBtn, {BackgroundColor3 = CurrentTheme.Surface}, HOVER_SPEED) end)
+            optBtn.MouseLeave:Connect(function() Tween(optBtn, {BackgroundColor3 = CurrentTheme.Surface2}, HOVER_SPEED) end)
             optBtn.MouseButton1Click:Connect(function()
-                currentValue = opt; dropBtn.Text = opt; dropList.Visible = false; callback(opt); events.OnChanged:Fire(opt)
+                currentValue = opt; dropBtn.Text = opt; callback(opt); events.OnChanged:Fire(opt)
+                Tween(dropList, {Size = UDim2.new(0, 118, 0, 0)}, 0.18, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+                task.delay(0.18, function() dropList.Visible = false end)
             end)
         end
     end
     refreshOptions(options)
     
     dropBtn.MouseButton1Click:Connect(function()
-        dropList.Visible = not dropList.Visible
-        if dropList.Visible then dropList.Position = UDim2.new(1, -130, 0, 38) end
+        if dropList.Visible then
+            Tween(dropList, {Size = UDim2.new(0, 118, 0, 0)}, 0.18, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+            task.delay(0.18, function() dropList.Visible = false end)
+        else
+            dropList.Visible = true
+            dropList.Position = UDim2.new(1, -130, 0, 38)
+            Tween(dropList, {Size = UDim2.new(0, 118, 0, math.min(#options * 24 + 4, 150))}, 0.2, Enum.EasingStyle.Sine)
+        end
     end)
     
     return {Set = function(v) currentValue = v; dropBtn.Text = v end, Get = function() return currentValue end, Refresh = refreshOptions, Value = currentValue, Events = events}
@@ -1216,8 +1237,14 @@ function Nebula.CreateColorPicker(page, config)
     
     colorPreview.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            popup.Visible = not popup.Visible
-            if popup.Visible then Tween(popup, {Size = UDim2.new(1, 0, 0, 75)}, 0.2) else Tween(popup, {Size = UDim2.new(1, 0, 0, 0)}, 0.2) end
+            if popup.Visible then
+                Tween(popup, {Size = UDim2.new(1, 0, 0, 0)}, 0.16, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+                task.delay(0.16, function() popup.Visible = false end)
+            else
+                popup.Visible = true
+                popup.Size = UDim2.new(1, 0, 0, 0)
+                Tween(popup, {Size = UDim2.new(1, 0, 0, 75)}, 0.2, Enum.EasingStyle.Sine)
+            end
         end
     end)
     
