@@ -36,14 +36,6 @@ Load the library.
 local Nebula = loadstring(game:HttpGet("https://github.com/lzhenweiDev/Nebula-UI/raw/refs/heads/main/V2.lua"))()
 ```
 
-Replace:
-
-```
-YOUR_RAW_URL
-```
-
-with your Raw GitHub URL.
-
 ---
 
 # 🚀 Creating a Window
