@@ -39,20 +39,20 @@ local FONT_BOLD = Enum.Font.GothamBold
 -- =====================================================================
 local Themes = {
     Amethyst = {
-        Background = Color3.fromRGB(18, 10, 48),
-        Background2 = Color3.fromRGB(28, 14, 72),
+        Background = Color3.fromRGB(10, 8, 32),
+        Background2 = Color3.fromRGB(22, 12, 70),
         Surface = Color3.fromRGB(42, 24, 108),
-        Surface2 = Color3.fromRGB(62, 36, 152),
-        Text = Color3.fromRGB(240, 240, 255),
-        TextDim = Color3.fromRGB(190, 180, 220),
-        Accent = Color3.fromRGB(190, 130, 255),
-        AccentHover = Color3.fromRGB(220, 170, 255),
-        AccentGlow = Color3.fromRGB(230, 210, 255),
+        Surface2 = Color3.fromRGB(78, 40, 196),
+        Text = Color3.fromRGB(245, 245, 255),
+        TextDim = Color3.fromRGB(195, 190, 225),
+        Accent = Color3.fromRGB(190, 145, 255),
+        AccentHover = Color3.fromRGB(220, 185, 255),
+        AccentGlow = Color3.fromRGB(240, 230, 255),
         Danger = Color3.fromRGB(220, 90, 110),
         Success = Color3.fromRGB(110, 220, 145),
         Warning = Color3.fromRGB(255, 200, 90),
-        Border = Color3.fromRGB(120, 90, 180),
-        Shadow = Color3.fromRGB(5, 2, 24),
+        Border = Color3.fromRGB(130, 95, 200),
+        Shadow = Color3.fromRGB(3, 3, 18),
         Gloss = false,
     },
     Dark = {
@@ -498,7 +498,7 @@ function Window.new(config)
     -- Main Frame
     self.Main = Create("Frame", {
         Parent = self.SG,
-        BackgroundColor3 = CurrentTheme.Surface2,
+        BackgroundColor3 = CurrentTheme.Background2,
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, -275, 0.5, -200),
@@ -516,7 +516,7 @@ function Window.new(config)
     -- Title Bar
     self.TitleBar = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Surface2,
+        BackgroundColor3 = CurrentTheme.Surface,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 42),
         ZIndex = 2,
@@ -587,7 +587,7 @@ function Window.new(config)
     -- Sidebar
     self.TabContainer = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Surface2,
+        BackgroundColor3 = CurrentTheme.Surface,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
         Size = UDim2.new(0, 140, 1, -42),
@@ -611,20 +611,24 @@ function Window.new(config)
     -- Content
     self.ContentArea = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundColor3 = CurrentTheme.Background,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 140, 0, 42),
         Size = UDim2.new(1, -140, 1, -42),
         ZIndex = 1,
     })
+    Create("UIStroke", {Parent = self.ContentArea, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.75})
     
     self.PageContainer = Create("Frame", {
         Parent = self.ContentArea,
-        BackgroundTransparency = 1,
-        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundTransparency = 0,
+        Size = UDim2.new(1, -16, 1, -16),
+        Position = UDim2.new(0, 8, 0, 8),
         ClipsDescendants = true,
         ZIndex = 1,
     })
+    Create("UIStroke", {Parent = self.PageContainer, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.75})
     self.TabFlash = Create("Frame", {
         Parent = self.ContentArea,
         BackgroundColor3 = CurrentTheme.Accent,
@@ -692,8 +696,8 @@ function Window:CreateTab(name, icon)
     
     local page = Create("ScrollingFrame", {
         Parent = self.PageContainer,
-        BackgroundColor3 = CurrentTheme.Background2,
-        BackgroundTransparency = 1,
+        BackgroundColor3 = CurrentTheme.Surface2,
+        BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
         ScrollBarThickness = 8,
@@ -704,6 +708,7 @@ function Window:CreateTab(name, icon)
         Visible = false,
         ZIndex = 2,
     })
+    Create("UIStroke", {Parent = page, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.6})
     
     Create("UIListLayout", {
         Parent = page,
@@ -762,10 +767,10 @@ function Nebula.CreateSection(tab, config)
     
     local section = Create("Frame", {
         Parent = page,
-        BackgroundColor3 = CurrentTheme.Surface,
-        BorderColor3 = CurrentTheme.Accent,
+        BackgroundColor3 = CurrentTheme.Surface2,
+        BorderColor3 = CurrentTheme.Border,
         BorderSizePixel = 1,
-        Size = UDim2.new(1, 0, 0, name ~= "" and 32 or 0),
+        Size = UDim2.new(1, 0, 0, name ~= "" and 38 or 0),
         ZIndex = 1,
     })
     if name ~= "" then AddCorner(section, 8); if CurrentTheme.Gloss then AddGloss(section) end end
