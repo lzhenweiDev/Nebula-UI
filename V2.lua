@@ -30,21 +30,21 @@ local FONT_BOLD = Enum.Font.GothamBold
 -- =====================================================================
 local Themes = {
     Amethyst = {
-        Background = Color3.fromRGB(12, 10, 26),
-        Background2 = Color3.fromRGB(18, 14, 38),
-        Surface = Color3.fromRGB(34, 28, 56),
-        Surface2 = Color3.fromRGB(28, 22, 46),
+        Background = Color3.fromRGB(9, 6, 28),
+        Background2 = Color3.fromRGB(18, 10, 45),
+        Surface = Color3.fromRGB(45, 28, 80),
+        Surface2 = Color3.fromRGB(50, 32, 95),
         Text = Color3.fromRGB(245, 244, 251),
         TextDim = Color3.fromRGB(170, 162, 193),
-        Accent = Color3.fromRGB(125, 90, 255),
-        AccentHover = Color3.fromRGB(175, 140, 255),
-        AccentGlow = Color3.fromRGB(210, 170, 255),
+        Accent = Color3.fromRGB(145, 100, 255),
+        AccentHover = Color3.fromRGB(195, 155, 255),
+        AccentGlow = Color3.fromRGB(225, 190, 255),
         Danger = Color3.fromRGB(225, 90, 110),
-        Success = Color3.fromRGB(100, 215, 145),
-        Warning = Color3.fromRGB(255, 185, 75),
-        Border = Color3.fromRGB(78, 61, 115),
-        Shadow = Color3.fromRGB(6, 5, 16),
-        Gloss = false,
+        Success = Color3.fromRGB(105, 220, 145),
+        Warning = Color3.fromRGB(255, 195, 80),
+        Border = Color3.fromRGB(105, 75, 160),
+        Shadow = Color3.fromRGB(4, 3, 12),
+        Gloss = true,
     },
     Dark = {
         Background = Color3.fromRGB(18, 18, 28),
@@ -108,8 +108,8 @@ end
 local function AddGloss(obj)
     local gloss = Create("Frame", {
         Parent = obj,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.96,
+        BackgroundColor3 = CurrentTheme.AccentGlow,
+        BackgroundTransparency = 0.88,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0.18, 0),
         Position = UDim2.new(0, 0, 0, 0),
@@ -120,13 +120,13 @@ local function AddGloss(obj)
         Parent = gloss,
         Color = ColorSequence.new({
             ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(230, 220, 255)),
+            ColorSequenceKeypoint.new(1, CurrentTheme.AccentGlow),
         }),
-        Transparency = NumberSequence.new{
-            NumberSequenceKeypoint.new(0, 0.92),
-            NumberSequenceKeypoint.new(0.4, 0.97),
+        Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0.78),
+            NumberSequenceKeypoint.new(0.4, 0.9),
             NumberSequenceKeypoint.new(1, 1),
-        },
+        }),
         Rotation = 0,
     })
     return gloss
@@ -256,7 +256,7 @@ local function ShowLoadingScreen(config)
     -- Background
     local bg = Create("Frame", {
         Parent = SG,
-        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundColor3 = CurrentTheme.Shadow,
         BackgroundTransparency = 1,
         Size = UDim2.new(1, 0, 1, 0),
         ZIndex = 999,
@@ -497,6 +497,7 @@ function Window.new(config)
     AddShadow(self.Main, 0.5, 10)
     Create("UIStroke", {Parent = self.Main, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.7})
     if CurrentTheme.Gloss then AddGloss(self.Main) end
+    Create("UIGradient", {Parent = self.Main, Color = ColorSequence.new({CurrentTheme.Background, CurrentTheme.Surface2}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.8, 0.75), NumberSequenceKeypoint.new(1, 1)}), Rotation = 90})
     
     -- Title Bar
     self.TitleBar = Create("Frame", {
@@ -527,7 +528,7 @@ function Window.new(config)
         Size = UDim2.new(1, -120, 1, 0),
         Font = FONT_BOLD,
         Text = self.Title,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextColor3 = CurrentTheme.Text,
         TextSize = 14,
         TextXAlignment = Enum.TextXAlignment.Left,
         ZIndex = 3,
@@ -536,13 +537,13 @@ function Window.new(config)
     -- Close button
     local closeBtn = Create("TextButton", {
         Parent = self.TitleBar,
-        BackgroundColor3 = Color3.fromRGB(200, 50, 50),
+        BackgroundColor3 = CurrentTheme.Danger,
         BorderSizePixel = 0,
         Position = UDim2.new(1, -34, 0, 8),
         Size = UDim2.new(0, 26, 0, 26),
         Font = FONT_BOLD,
         Text = "✕",
-        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextColor3 = CurrentTheme.Text,
         TextSize = 14,
         AutoButtonColor = false,
         ZIndex = 3,
@@ -553,13 +554,13 @@ function Window.new(config)
     -- Minimize button
     local minBtn = Create("TextButton", {
         Parent = self.TitleBar,
-        BackgroundColor3 = Color3.fromRGB(60, 60, 70),
+        BackgroundColor3 = CurrentTheme.Surface2,
         BorderSizePixel = 0,
         Position = UDim2.new(1, -66, 0, 8),
         Size = UDim2.new(0, 26, 0, 26),
         Font = FONT_BOLD,
         Text = "−",
-        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextColor3 = CurrentTheme.Text,
         TextSize = 16,
         AutoButtonColor = false,
         ZIndex = 3,
@@ -572,12 +573,13 @@ function Window.new(config)
     -- Sidebar
     self.TabContainer = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundColor3 = CurrentTheme.Surface2,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
         Size = UDim2.new(0, 140, 1, -42),
         ZIndex = 1,
     })
+    Create("UIStroke", {Parent = self.TabContainer, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.65})
     
     Create("UIListLayout", {
         Parent = self.TabContainer,
@@ -595,7 +597,7 @@ function Window.new(config)
     -- Content
     self.ContentArea = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background,
+        BackgroundColor3 = CurrentTheme.Surface,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 140, 0, 42),
         Size = UDim2.new(1, -140, 1, -42),
@@ -679,7 +681,7 @@ function Window:CreateTab(name, icon)
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
         ScrollBarThickness = 3,
-        ScrollBarImageColor3 = Color3.fromRGB(60, 60, 80),
+        ScrollBarImageColor3 = CurrentTheme.Border,
         CanvasSize = UDim2.new(0, 0, 0, 0),
         AutomaticCanvasSize = Enum.AutomaticSize.Y,
         Visible = false,
@@ -742,7 +744,7 @@ function Nebula.CreateSection(tab, config)
     
     local section = Create("Frame", {
         Parent = page,
-        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundColor3 = CurrentTheme.Surface2,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, name ~= "" and 28 or 0),
         ZIndex = 1,
@@ -752,7 +754,7 @@ function Nebula.CreateSection(tab, config)
     if name ~= "" then
         Create("Frame", {
             Parent = section,
-            BackgroundColor3 = CurrentTheme.AccentGlow,
+            BackgroundColor3 = CurrentTheme.Accent,
             BorderSizePixel = 0,
             Size = UDim2.new(0, 3, 1, 0),
             ZIndex = 2,
@@ -823,7 +825,7 @@ function Nebula.CreateToggle(page, config)
     
     local toggleBg = Create("Frame", {
         Parent = frame,
-        BackgroundColor3 = default and CurrentTheme.Success or Color3.fromRGB(60, 60, 70),
+        BackgroundColor3 = default and CurrentTheme.Success or CurrentTheme.Surface2,
         BorderSizePixel = 0,
         Position = UDim2.new(1, -44, 0.5, -10),
         Size = UDim2.new(0, 36, 0, 20),
@@ -833,7 +835,7 @@ function Nebula.CreateToggle(page, config)
     
     local toggleDot = Create("Frame", {
         Parent = toggleBg,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundColor3 = CurrentTheme.Text,
         BorderSizePixel = 0,
         Position = default and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7),
         Size = UDim2.new(0, 14, 0, 14),
@@ -849,7 +851,7 @@ function Nebula.CreateToggle(page, config)
             Tween(toggleBg, {BackgroundColor3 = CurrentTheme.Success}, HOVER_SPEED)
             Tween(toggleDot, {Position = UDim2.new(1, -17, 0.5, -7)}, HOVER_SPEED)
         else
-            Tween(toggleBg, {BackgroundColor3 = Color3.fromRGB(60, 60, 70)}, HOVER_SPEED)
+            Tween(toggleBg, {BackgroundColor3 = CurrentTheme.Surface2}, HOVER_SPEED)
             Tween(toggleDot, {Position = UDim2.new(0, 3, 0.5, -7)}, HOVER_SPEED)
         end
     end
@@ -876,7 +878,7 @@ function Nebula.CreateButton(page, config)
         Size = UDim2.new(1, 0, 0, 36),
         Font = FONT_BOLD,
         Text = name,
-        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextColor3 = CurrentTheme.Text,
         TextSize = 12,
         AutoButtonColor = false,
         ZIndex = 1,
@@ -885,7 +887,7 @@ function Nebula.CreateButton(page, config)
     if CurrentTheme.Gloss then AddGloss(btn) end
     
     btn.MouseEnter:Connect(function()
-        Tween(btn, {BackgroundColor3 = color:Lerp(Color3.fromRGB(255, 255, 255), 0.12)}, 0.12)
+        Tween(btn, {BackgroundColor3 = color:Lerp(CurrentTheme.AccentHover, 0.18)}, 0.12)
     end)
     btn.MouseLeave:Connect(function() Tween(btn, {BackgroundColor3 = color}, 0.12) end)
     
@@ -1184,7 +1186,7 @@ function Nebula.CreateCheckbox(page, config)
     local checkbox = Create("TextButton", {
         Parent = frame, BackgroundColor3 = (config.Default and CurrentTheme.Accent or CurrentTheme.Surface2),
         BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1, Position = UDim2.new(0, 12, 0.5, -9), Size = UDim2.new(0, 18, 0, 18),
-        Font = FONT_BOLD, Text = config.Default and "✓" or "", TextColor3 = Color3.fromRGB(255, 255, 255),
+        Font = FONT_BOLD, Text = config.Default and "✓" or "", TextColor3 = CurrentTheme.Text,
         TextSize = 12, AutoButtonColor = false, ZIndex = 2,
     })
     AddCorner(checkbox, 4)
@@ -1207,12 +1209,12 @@ function Nebula.CreateCheckbox(page, config)
         end
     end)
     
-    return {Set = function(v) state = v; checkbox.BackgroundColor3 = state and CurrentTheme.Accent or Color3.fromRGB(40,40,50); checkbox.Text = state and "✓" or "" end, Get = function() return state end, Value = state, Events = events}
+    return {Set = function(v) state = v; checkbox.BackgroundColor3 = state and CurrentTheme.Accent or CurrentTheme.Surface2; checkbox.Text = state and "✓" or "" end, Get = function() return state end, Value = state, Events = events}
 end
 
 function Nebula.CreateColorPicker(page, config)
     config = config or {}
-    local default = config.Default or Color3.fromRGB(140, 80, 255)
+    local default = config.Default or CurrentTheme.Accent
     local frame = Create("Frame", {
         Parent = page, BackgroundColor3 = CurrentTheme.Surface, BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 38), ZIndex = 1,
@@ -1245,7 +1247,7 @@ function Nebula.CreateColorPicker(page, config)
     local colors = {"R", "G", "B"}
     for i, c in pairs(colors) do
         local row = Create("Frame", {Parent = popup, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 22)})
-        Create("TextLabel", {Parent = row, BackgroundTransparency = 1, Position = UDim2.new(0, 6, 0, 0), Size = UDim2.new(0, 16, 1, 0), Font = FONT_BOLD, Text = c, TextColor3 = Color3.fromRGB(255,255,255), TextSize = 10, ZIndex = 21})
+        Create("TextLabel", {Parent = row, BackgroundTransparency = 1, Position = UDim2.new(0, 6, 0, 0), Size = UDim2.new(0, 16, 1, 0), Font = FONT_BOLD, Text = c, TextColor3 = CurrentTheme.Text, TextSize = 10, ZIndex = 21})
         local bg = Create("Frame", {Parent = row, BackgroundColor3 = CurrentTheme.Surface2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1, Position = UDim2.new(0, 26, 0.5, -3), Size = UDim2.new(1, -70, 0, 6), ZIndex = 21})
         local fill = Create("Frame", {Parent = bg, BackgroundColor3 = i==1 and Color3.fromRGB(255,0,0) or i==2 and Color3.fromRGB(0,255,0) or Color3.fromRGB(0,0,255), BorderSizePixel = 0, Size = UDim2.new(values[i]/255, 0, 1, 0), ZIndex = 22})
         local inp = Create("TextBox", {Parent = row, BackgroundColor3 = CurrentTheme.Background2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1, Position = UDim2.new(1, -40, 0.5, -8), Size = UDim2.new(0, 34, 0, 16), Font = Enum.Font.Code, Text = tostring(values[i]), TextColor3 = CurrentTheme.Text, TextSize = 9, ZIndex = 21})
