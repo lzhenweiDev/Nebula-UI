@@ -259,6 +259,8 @@ local function ShowLoadingScreen(config)
         Parent = GetGuiParent(),
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        DisplayOrder = 1000,
+        Enabled = true,
     })
     
     -- Background
@@ -488,6 +490,8 @@ function Window.new(config)
         Parent = GetGuiParent(),
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        DisplayOrder = 999,
+        Enabled = true,
     })
     
     -- Main Frame
@@ -581,7 +585,7 @@ function Window.new(config)
     -- Sidebar
     self.TabContainer = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Surface,
+        BackgroundColor3 = CurrentTheme.Background2,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
         Size = UDim2.new(0, 140, 1, -42),
@@ -685,7 +689,8 @@ function Window:CreateTab(name, icon)
     
     local page = Create("ScrollingFrame", {
         Parent = self.PageContainer,
-        BackgroundTransparency = 1,
+        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
         ScrollBarThickness = 3,
@@ -732,7 +737,8 @@ function Window:CreateTab(name, icon)
     if #self.Tabs == 0 then
         page.BackgroundTransparency = 0
         page.Visible = true
-        Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Accent, TextColor3 = CurrentTheme.Text}, 0.1)
+        tabBtn.BackgroundColor3 = CurrentTheme.Accent
+        tabBtn.TextColor3 = CurrentTheme.Text
         self.currentTab = name
     end
     
