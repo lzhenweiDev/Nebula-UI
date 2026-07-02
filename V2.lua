@@ -486,7 +486,7 @@ function Window.new(config)
     self.Main = Create("Frame", {
         Parent = self.SG,
         BackgroundColor3 = CurrentTheme.Background,
-        BackgroundTransparency = 1,
+        BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, -275, 0.5, -200),
         Size = UDim2.new(0, 550, 0, 400),
@@ -497,7 +497,7 @@ function Window.new(config)
     AddShadow(self.Main, 0.5, 10)
     Create("UIStroke", {Parent = self.Main, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.7})
     if CurrentTheme.Gloss then AddGloss(self.Main) end
-    Create("UIGradient", {Parent = self.Main, Color = ColorSequence.new({CurrentTheme.Background, CurrentTheme.Surface2}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.8, 0.75), NumberSequenceKeypoint.new(1, 1)}), Rotation = 90})
+    Create("UIGradient", {Parent = self.Main, Color = ColorSequence.new({CurrentTheme.Background, CurrentTheme.Surface2}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.7, 0.2), NumberSequenceKeypoint.new(1, 0.4)}), Rotation = 90})
     
     -- Title Bar
     self.TitleBar = Create("Frame", {
@@ -597,7 +597,7 @@ function Window.new(config)
     -- Content
     self.ContentArea = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Surface,
+        BackgroundColor3 = CurrentTheme.Background2,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 140, 0, 42),
         Size = UDim2.new(1, -140, 1, -42),
