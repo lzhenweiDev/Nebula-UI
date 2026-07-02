@@ -615,7 +615,7 @@ function Window.new(config)
         BorderSizePixel = 0,
         Position = UDim2.new(0, 140, 0, 42),
         Size = UDim2.new(1, -140, 1, -42),
-        ZIndex = 11,
+        ZIndex = 1,
     })
     
     self.PageContainer = Create("Frame", {
@@ -623,7 +623,7 @@ function Window.new(config)
         BackgroundTransparency = 1,
         Size = UDim2.new(1, 0, 1, 0),
         ClipsDescendants = true,
-        ZIndex = 2,
+        ZIndex = 1,
     })
     self.TabFlash = Create("Frame", {
         Parent = self.ContentArea,
@@ -693,7 +693,7 @@ function Window:CreateTab(name, icon)
     local page = Create("ScrollingFrame", {
         Parent = self.PageContainer,
         BackgroundColor3 = CurrentTheme.Background2,
-        BackgroundTransparency = 0,
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
         ScrollBarThickness = 8,
@@ -702,7 +702,7 @@ function Window:CreateTab(name, icon)
         CanvasSize = UDim2.new(0, 0, 0, 0),
         AutomaticCanvasSize = Enum.AutomaticSize.Y,
         Visible = false,
-        ZIndex = 3,
+        ZIndex = 2,
     })
     
     Create("UIListLayout", {
