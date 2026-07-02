@@ -16,11 +16,12 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
 local function GetGuiParent()
-    if Players.LocalPlayer then
-        local playerGui = Players.LocalPlayer:FindFirstChild("PlayerGui") or Players.LocalPlayer:WaitForChild("PlayerGui")
-        return playerGui or CoreGui
+    local player = Players.LocalPlayer
+    if not player then
+        player = Players.PlayerAdded:Wait()
     end
-    return CoreGui
+    local playerGui = player:FindFirstChild("PlayerGui") or player:WaitForChild("PlayerGui")
+    return playerGui or CoreGui
 end
 
 -- =====================================================================
@@ -38,21 +39,21 @@ local FONT_BOLD = Enum.Font.GothamBold
 -- =====================================================================
 local Themes = {
     Amethyst = {
-        Background = Color3.fromRGB(24, 10, 80),
-        Background2 = Color3.fromRGB(35, 14, 110),
-        Surface = Color3.fromRGB(65, 35, 170),
-        Surface2 = Color3.fromRGB(95, 60, 220),
-        Text = Color3.fromRGB(245, 245, 255),
-        TextDim = Color3.fromRGB(210, 200, 235),
-        Accent = Color3.fromRGB(180, 120, 255),
-        AccentHover = Color3.fromRGB(235, 190, 255),
-        AccentGlow = Color3.fromRGB(250, 230, 255),
-        Danger = Color3.fromRGB(225, 90, 110),
-        Success = Color3.fromRGB(115, 235, 160),
-        Warning = Color3.fromRGB(255, 205, 95),
-        Border = Color3.fromRGB(145, 105, 215),
-        Shadow = Color3.fromRGB(8, 4, 30),
-        Gloss = true,
+        Background = Color3.fromRGB(18, 10, 48),
+        Background2 = Color3.fromRGB(28, 14, 72),
+        Surface = Color3.fromRGB(42, 24, 108),
+        Surface2 = Color3.fromRGB(62, 36, 152),
+        Text = Color3.fromRGB(240, 240, 255),
+        TextDim = Color3.fromRGB(190, 180, 220),
+        Accent = Color3.fromRGB(190, 130, 255),
+        AccentHover = Color3.fromRGB(220, 170, 255),
+        AccentGlow = Color3.fromRGB(230, 210, 255),
+        Danger = Color3.fromRGB(220, 90, 110),
+        Success = Color3.fromRGB(110, 220, 145),
+        Warning = Color3.fromRGB(255, 200, 90),
+        Border = Color3.fromRGB(120, 90, 180),
+        Shadow = Color3.fromRGB(5, 2, 24),
+        Gloss = false,
     },
     Dark = {
         Background = Color3.fromRGB(18, 18, 28),
@@ -497,13 +498,14 @@ function Window.new(config)
     -- Main Frame
     self.Main = Create("Frame", {
         Parent = self.SG,
-        BackgroundColor3 = CurrentTheme.Background,
+        BackgroundColor3 = CurrentTheme.Surface2,
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, -275, 0.5, -200),
         Size = UDim2.new(0, 550, 0, 400),
+        Active = true,
         ClipsDescendants = true,
-        ZIndex = 1,
+        ZIndex = 10,
     })
     AddCorner(self.Main, 12)
     AddShadow(self.Main, 0.45, 12)
@@ -585,11 +587,11 @@ function Window.new(config)
     -- Sidebar
     self.TabContainer = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundColor3 = CurrentTheme.Surface2,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
         Size = UDim2.new(0, 140, 1, -42),
-        ZIndex = 1,
+        ZIndex = 11,
     })
     Create("UIStroke", {Parent = self.TabContainer, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.65})
     
@@ -613,7 +615,7 @@ function Window.new(config)
         BorderSizePixel = 0,
         Position = UDim2.new(0, 140, 0, 42),
         Size = UDim2.new(1, -140, 1, -42),
-        ZIndex = 1,
+        ZIndex = 11,
     })
     
     self.PageContainer = Create("Frame", {
@@ -621,6 +623,7 @@ function Window.new(config)
         BackgroundTransparency = 1,
         Size = UDim2.new(1, 0, 1, 0),
         ClipsDescendants = true,
+        ZIndex = 2,
     })
     self.TabFlash = Create("Frame", {
         Parent = self.ContentArea,
@@ -693,12 +696,13 @@ function Window:CreateTab(name, icon)
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
-        ScrollBarThickness = 3,
+        ScrollBarThickness = 8,
         ScrollBarImageColor3 = CurrentTheme.Border,
+        ScrollBarImageTransparency = 0.35,
         CanvasSize = UDim2.new(0, 0, 0, 0),
         AutomaticCanvasSize = Enum.AutomaticSize.Y,
         Visible = false,
-        ZIndex = 1,
+        ZIndex = 3,
     })
     
     Create("UIListLayout", {
@@ -758,10 +762,10 @@ function Nebula.CreateSection(tab, config)
     
     local section = Create("Frame", {
         Parent = page,
-        BackgroundColor3 = CurrentTheme.Background,
-        BorderColor3 = CurrentTheme.Border,
+        BackgroundColor3 = CurrentTheme.Surface,
+        BorderColor3 = CurrentTheme.Accent,
         BorderSizePixel = 1,
-        Size = UDim2.new(1, 0, 0, name ~= "" and 28 or 0),
+        Size = UDim2.new(1, 0, 0, name ~= "" and 32 or 0),
         ZIndex = 1,
     })
     if name ~= "" then AddCorner(section, 8); if CurrentTheme.Gloss then AddGloss(section) end end
