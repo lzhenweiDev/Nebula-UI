@@ -15,15 +15,6 @@ local TextService = game:GetService("TextService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
-local function GetGuiParent()
-    local player = Players.LocalPlayer
-    if not player then
-        player = Players.PlayerAdded:Wait()
-    end
-    local playerGui = player:FindFirstChild("PlayerGui") or player:WaitForChild("PlayerGui")
-    return playerGui or CoreGui
-end
-
 -- =====================================================================
 -- CONSTANTS
 -- =====================================================================
@@ -39,20 +30,20 @@ local FONT_BOLD = Enum.Font.GothamBold
 -- =====================================================================
 local Themes = {
     Amethyst = {
-        Background = Color3.fromRGB(14, 10, 40),
-        Background2 = Color3.fromRGB(26, 16, 80),
-        Surface = Color3.fromRGB(45, 30, 110),
-        Surface2 = Color3.fromRGB(92, 54, 214),
-        Text = Color3.fromRGB(245, 245, 255),
-        TextDim = Color3.fromRGB(200, 192, 230),
-        Accent = Color3.fromRGB(200, 155, 255),
-        AccentHover = Color3.fromRGB(230, 190, 255),
-        AccentGlow = Color3.fromRGB(245, 235, 255),
-        Danger = Color3.fromRGB(220, 90, 110),
-        Success = Color3.fromRGB(110, 220, 145),
-        Warning = Color3.fromRGB(255, 200, 90),
-        Border = Color3.fromRGB(145, 105, 220),
-        Shadow = Color3.fromRGB(5, 4, 24),
+        Background = Color3.fromRGB(9, 7, 16),
+        Background2 = Color3.fromRGB(13, 9, 22),
+        Surface = Color3.fromRGB(29, 22, 46),
+        Surface2 = Color3.fromRGB(23, 17, 38),
+        Text = Color3.fromRGB(245, 241, 255),
+        TextDim = Color3.fromRGB(180, 168, 214),
+        Accent = Color3.fromRGB(140, 80, 255),
+        AccentHover = Color3.fromRGB(160, 110, 255),
+        AccentGlow = Color3.fromRGB(180, 130, 255),
+        Danger = Color3.fromRGB(255, 70, 70),
+        Success = Color3.fromRGB(80, 220, 120),
+        Warning = Color3.fromRGB(255, 180, 50),
+        Border = Color3.fromRGB(78, 62, 116),
+        Shadow = Color3.fromRGB(3, 2, 8),
         Gloss = true,
     },
     Dark = {
@@ -117,27 +108,14 @@ end
 local function AddGloss(obj)
     local gloss = Create("Frame", {
         Parent = obj,
-        BackgroundColor3 = CurrentTheme.AccentGlow,
-        BackgroundTransparency = 0.88,
+        BackgroundColor3 = Color3.fromRGB(248, 244, 255),
+        BackgroundTransparency = 0.97,
         BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0.18, 0),
+        Size = UDim2.new(1, 0, 0.32, 0),
         Position = UDim2.new(0, 0, 0, 0),
         ZIndex = 99,
     })
     AddCorner(gloss, CORNER_RADIUS)
-    Create("UIGradient", {
-        Parent = gloss,
-        Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
-            ColorSequenceKeypoint.new(1, CurrentTheme.AccentGlow),
-        }),
-        Transparency = NumberSequence.new({
-            NumberSequenceKeypoint.new(0, 0.78),
-            NumberSequenceKeypoint.new(0.4, 0.9),
-            NumberSequenceKeypoint.new(1, 1),
-        }),
-        Rotation = 0,
-    })
     return gloss
 end
 
@@ -257,17 +235,15 @@ local function ShowLoadingScreen(config)
     
     local SG = Create("ScreenGui", {
         Name = "NebulaLoading",
-        Parent = GetGuiParent(),
+        Parent = CoreGui,
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-        DisplayOrder = 1000,
-        Enabled = true,
     })
     
     -- Background
     local bg = Create("Frame", {
         Parent = SG,
-        BackgroundColor3 = CurrentTheme.Shadow,
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
         BackgroundTransparency = 1,
         Size = UDim2.new(1, 0, 1, 0),
         ZIndex = 999,
@@ -488,41 +464,35 @@ function Window.new(config)
     
     self.SG = Create("ScreenGui", {
         Name = "NebulaUI_" .. self.Title,
-        Parent = GetGuiParent(),
+        Parent = CoreGui,
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-        DisplayOrder = 999,
-        Enabled = true,
     })
     
     -- Main Frame
     self.Main = Create("Frame", {
         Parent = self.SG,
-        BackgroundColor3 = CurrentTheme.Background2,
-        BackgroundTransparency = 0,
+        BackgroundColor3 = CurrentTheme.Background,
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, -275, 0.5, -200),
         Size = UDim2.new(0, 550, 0, 400),
-        Active = true,
         ClipsDescendants = true,
-        ZIndex = 10,
+        ZIndex = 1,
     })
     AddCorner(self.Main, 12)
-    AddShadow(self.Main, 0.45, 12)
-    Create("UIStroke", {Parent = self.Main, Color = CurrentTheme.Border, Thickness = 2, Transparency = 0.6})
+    AddShadow(self.Main, 0.5, 10)
     if CurrentTheme.Gloss then AddGloss(self.Main) end
-    Create("UIGradient", {Parent = self.Main, Color = ColorSequence.new({CurrentTheme.Background, CurrentTheme.Surface2}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.55, 0.14), NumberSequenceKeypoint.new(1, 0.35)}), Rotation = 90})
     
     -- Title Bar
     self.TitleBar = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Surface,
+        BackgroundColor3 = CurrentTheme.Background2,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 42),
         ZIndex = 2,
     })
     AddCorner(self.TitleBar, 12)
-    Create("UIStroke", {Parent = self.TitleBar, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.8})
     if CurrentTheme.Gloss then AddGloss(self.TitleBar) end
     
     -- Glow line
@@ -542,7 +512,7 @@ function Window.new(config)
         Size = UDim2.new(1, -120, 1, 0),
         Font = FONT_BOLD,
         Text = self.Title,
-        TextColor3 = CurrentTheme.Text,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 14,
         TextXAlignment = Enum.TextXAlignment.Left,
         ZIndex = 3,
@@ -551,13 +521,13 @@ function Window.new(config)
     -- Close button
     local closeBtn = Create("TextButton", {
         Parent = self.TitleBar,
-        BackgroundColor3 = CurrentTheme.Danger,
+        BackgroundColor3 = Color3.fromRGB(200, 50, 50),
         BorderSizePixel = 0,
         Position = UDim2.new(1, -34, 0, 8),
         Size = UDim2.new(0, 26, 0, 26),
         Font = FONT_BOLD,
         Text = "✕",
-        TextColor3 = CurrentTheme.Text,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 14,
         AutoButtonColor = false,
         ZIndex = 3,
@@ -568,13 +538,13 @@ function Window.new(config)
     -- Minimize button
     local minBtn = Create("TextButton", {
         Parent = self.TitleBar,
-        BackgroundColor3 = CurrentTheme.Surface2,
+        BackgroundColor3 = Color3.fromRGB(60, 60, 70),
         BorderSizePixel = 0,
         Position = UDim2.new(1, -66, 0, 8),
         Size = UDim2.new(0, 26, 0, 26),
         Font = FONT_BOLD,
         Text = "−",
-        TextColor3 = CurrentTheme.Text,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 16,
         AutoButtonColor = false,
         ZIndex = 3,
@@ -587,13 +557,12 @@ function Window.new(config)
     -- Sidebar
     self.TabContainer = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background,
+        BackgroundColor3 = CurrentTheme.Background2,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 42),
         Size = UDim2.new(0, 140, 1, -42),
-        ZIndex = 11,
+        ZIndex = 1,
     })
-    Create("UIStroke", {Parent = self.TabContainer, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.65})
     
     Create("UIListLayout", {
         Parent = self.TabContainer,
@@ -611,35 +580,19 @@ function Window.new(config)
     -- Content
     self.ContentArea = Create("Frame", {
         Parent = self.Main,
-        BackgroundColor3 = CurrentTheme.Background2,
+        BackgroundColor3 = CurrentTheme.Background,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 140, 0, 42),
         Size = UDim2.new(1, -140, 1, -42),
         ZIndex = 1,
     })
-    Create("UIStroke", {Parent = self.ContentArea, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.75})
     
     self.PageContainer = Create("Frame", {
         Parent = self.ContentArea,
-        BackgroundColor3 = CurrentTheme.Background,
-        BackgroundTransparency = 0,
-        Size = UDim2.new(1, -16, 1, -16),
-        Position = UDim2.new(0, 8, 0, 8),
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 1, 0),
         ClipsDescendants = true,
-        ZIndex = 1,
     })
-    Create("UIStroke", {Parent = self.PageContainer, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.75})
-    self.TabFlash = Create("Frame", {
-        Parent = self.ContentArea,
-        BackgroundColor3 = CurrentTheme.Accent,
-        BackgroundTransparency = 0.8,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 0, 0, 0),
-        Size = UDim2.new(0, 0, 0, 4),
-        ZIndex = 4,
-        Visible = false,
-    })
-    AddCorner(self.TabFlash, 4)
     
     self.Tabs = {}
     self.Pages = {}
@@ -696,19 +649,16 @@ function Window:CreateTab(name, icon)
     
     local page = Create("ScrollingFrame", {
         Parent = self.PageContainer,
-        BackgroundColor3 = CurrentTheme.Surface,
-        BackgroundTransparency = 0,
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
-        ScrollBarThickness = 8,
-        ScrollBarImageColor3 = CurrentTheme.Border,
-        ScrollBarImageTransparency = 0.35,
+        ScrollBarThickness = 3,
+        ScrollBarImageColor3 = Color3.fromRGB(60, 60, 80),
         CanvasSize = UDim2.new(0, 0, 0, 0),
         AutomaticCanvasSize = Enum.AutomaticSize.Y,
         Visible = false,
-        ZIndex = 2,
+        ZIndex = 1,
     })
-    Create("UIStroke", {Parent = page, Color = CurrentTheme.Border, Thickness = 1, Transparency = 0.6})
     
     Create("UIListLayout", {
         Parent = page,
@@ -726,28 +676,18 @@ function Window:CreateTab(name, icon)
     
     tabBtn.MouseButton1Click:Connect(function()
         for _, p in pairs(self.Pages) do p.Visible = false end
-        for _, t in pairs(self.Tabs) do
-            Tween(t, {BackgroundColor3 = CurrentTheme.Surface, TextColor3 = CurrentTheme.TextDim}, HOVER_SPEED)
-        end
+        for _, t in pairs(self.Tabs) do Tween(t, {BackgroundColor3 = CurrentTheme.Surface}, HOVER_SPEED) end
         page.BackgroundTransparency = 1
         page.Visible = true
         Tween(page, {BackgroundTransparency = 0}, 0.2)
-        Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Accent, TextColor3 = CurrentTheme.Text}, HOVER_SPEED)
-        self.TabFlash.Visible = true
-        self.TabFlash.Size = UDim2.new(0, 0, 0, 4)
-        Tween(self.TabFlash, {Size = UDim2.new(1, 0, 0, 4)}, 0.25, Enum.EasingStyle.Quart)
-        task.delay(0.25, function()
-            Tween(self.TabFlash, {BackgroundTransparency = 1}, 0.18)
-            task.delay(0.18, function() self.TabFlash.Visible = false end)
-        end)
+        Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Accent}, HOVER_SPEED)
         self.currentTab = name
     end)
     
     if #self.Tabs == 0 then
         page.BackgroundTransparency = 0
         page.Visible = true
-        tabBtn.BackgroundColor3 = CurrentTheme.Accent
-        tabBtn.TextColor3 = CurrentTheme.Text
+        Tween(tabBtn, {BackgroundColor3 = CurrentTheme.Accent}, 0.1)
         self.currentTab = name
     end
     
@@ -767,10 +707,9 @@ function Nebula.CreateSection(tab, config)
     
     local section = Create("Frame", {
         Parent = page,
-        BackgroundColor3 = CurrentTheme.Surface2,
-        BorderColor3 = CurrentTheme.Border,
-        BorderSizePixel = 1,
-        Size = UDim2.new(1, 0, 0, name ~= "" and 38 or 0),
+        BackgroundColor3 = CurrentTheme.Background2,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, name ~= "" and 28 or 0),
         ZIndex = 1,
     })
     if name ~= "" then AddCorner(section, 8); if CurrentTheme.Gloss then AddGloss(section) end end
@@ -778,7 +717,7 @@ function Nebula.CreateSection(tab, config)
     if name ~= "" then
         Create("Frame", {
             Parent = section,
-            BackgroundColor3 = CurrentTheme.Accent,
+            BackgroundColor3 = CurrentTheme.AccentGlow,
             BorderSizePixel = 0,
             Size = UDim2.new(0, 3, 1, 0),
             ZIndex = 2,
@@ -849,7 +788,7 @@ function Nebula.CreateToggle(page, config)
     
     local toggleBg = Create("Frame", {
         Parent = frame,
-        BackgroundColor3 = default and CurrentTheme.Success or CurrentTheme.Surface2,
+        BackgroundColor3 = default and CurrentTheme.Success or Color3.fromRGB(60, 60, 70),
         BorderSizePixel = 0,
         Position = UDim2.new(1, -44, 0.5, -10),
         Size = UDim2.new(0, 36, 0, 20),
@@ -859,7 +798,7 @@ function Nebula.CreateToggle(page, config)
     
     local toggleDot = Create("Frame", {
         Parent = toggleBg,
-        BackgroundColor3 = CurrentTheme.Text,
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BorderSizePixel = 0,
         Position = default and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7),
         Size = UDim2.new(0, 14, 0, 14),
@@ -875,7 +814,7 @@ function Nebula.CreateToggle(page, config)
             Tween(toggleBg, {BackgroundColor3 = CurrentTheme.Success}, HOVER_SPEED)
             Tween(toggleDot, {Position = UDim2.new(1, -17, 0.5, -7)}, HOVER_SPEED)
         else
-            Tween(toggleBg, {BackgroundColor3 = CurrentTheme.Surface2}, HOVER_SPEED)
+            Tween(toggleBg, {BackgroundColor3 = Color3.fromRGB(60, 60, 70)}, HOVER_SPEED)
             Tween(toggleDot, {Position = UDim2.new(0, 3, 0.5, -7)}, HOVER_SPEED)
         end
     end
@@ -902,7 +841,7 @@ function Nebula.CreateButton(page, config)
         Size = UDim2.new(1, 0, 0, 36),
         Font = FONT_BOLD,
         Text = name,
-        TextColor3 = CurrentTheme.Text,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 12,
         AutoButtonColor = false,
         ZIndex = 1,
@@ -911,7 +850,7 @@ function Nebula.CreateButton(page, config)
     if CurrentTheme.Gloss then AddGloss(btn) end
     
     btn.MouseEnter:Connect(function()
-        Tween(btn, {BackgroundColor3 = color:Lerp(CurrentTheme.AccentHover, 0.18)}, 0.12)
+        Tween(btn, {BackgroundColor3 = color:Lerp(Color3.fromRGB(255, 255, 255), 0.12)}, 0.12)
     end)
     btn.MouseLeave:Connect(function() Tween(btn, {BackgroundColor3 = color}, 0.12) end)
     
@@ -1210,7 +1149,7 @@ function Nebula.CreateCheckbox(page, config)
     local checkbox = Create("TextButton", {
         Parent = frame, BackgroundColor3 = (config.Default and CurrentTheme.Accent or CurrentTheme.Surface2),
         BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1, Position = UDim2.new(0, 12, 0.5, -9), Size = UDim2.new(0, 18, 0, 18),
-        Font = FONT_BOLD, Text = config.Default and "✓" or "", TextColor3 = CurrentTheme.Text,
+        Font = FONT_BOLD, Text = config.Default and "✓" or "", TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 12, AutoButtonColor = false, ZIndex = 2,
     })
     AddCorner(checkbox, 4)
@@ -1233,12 +1172,12 @@ function Nebula.CreateCheckbox(page, config)
         end
     end)
     
-    return {Set = function(v) state = v; checkbox.BackgroundColor3 = state and CurrentTheme.Accent or CurrentTheme.Surface2; checkbox.Text = state and "✓" or "" end, Get = function() return state end, Value = state, Events = events}
+    return {Set = function(v) state = v; checkbox.BackgroundColor3 = state and CurrentTheme.Accent or Color3.fromRGB(40,40,50); checkbox.Text = state and "✓" or "" end, Get = function() return state end, Value = state, Events = events}
 end
 
 function Nebula.CreateColorPicker(page, config)
     config = config or {}
-    local default = config.Default or CurrentTheme.Accent
+    local default = config.Default or Color3.fromRGB(140, 80, 255)
     local frame = Create("Frame", {
         Parent = page, BackgroundColor3 = CurrentTheme.Surface, BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 38), ZIndex = 1,
@@ -1271,7 +1210,7 @@ function Nebula.CreateColorPicker(page, config)
     local colors = {"R", "G", "B"}
     for i, c in pairs(colors) do
         local row = Create("Frame", {Parent = popup, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 22)})
-        Create("TextLabel", {Parent = row, BackgroundTransparency = 1, Position = UDim2.new(0, 6, 0, 0), Size = UDim2.new(0, 16, 1, 0), Font = FONT_BOLD, Text = c, TextColor3 = CurrentTheme.Text, TextSize = 10, ZIndex = 21})
+        Create("TextLabel", {Parent = row, BackgroundTransparency = 1, Position = UDim2.new(0, 6, 0, 0), Size = UDim2.new(0, 16, 1, 0), Font = FONT_BOLD, Text = c, TextColor3 = Color3.fromRGB(255,255,255), TextSize = 10, ZIndex = 21})
         local bg = Create("Frame", {Parent = row, BackgroundColor3 = CurrentTheme.Surface2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1, Position = UDim2.new(0, 26, 0.5, -3), Size = UDim2.new(1, -70, 0, 6), ZIndex = 21})
         local fill = Create("Frame", {Parent = bg, BackgroundColor3 = i==1 and Color3.fromRGB(255,0,0) or i==2 and Color3.fromRGB(0,255,0) or Color3.fromRGB(0,0,255), BorderSizePixel = 0, Size = UDim2.new(values[i]/255, 0, 1, 0), ZIndex = 22})
         local inp = Create("TextBox", {Parent = row, BackgroundColor3 = CurrentTheme.Background2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1, Position = UDim2.new(1, -40, 0.5, -8), Size = UDim2.new(0, 34, 0, 16), Font = Enum.Font.Code, Text = tostring(values[i]), TextColor3 = CurrentTheme.Text, TextSize = 9, ZIndex = 21})
