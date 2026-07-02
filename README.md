@@ -462,7 +462,7 @@ Window:Notify({...})
 # 📚 Complete Example
 
 ```lua
-local Nebula = loadstring(game:HttpGet("YOUR_RAW_URL"))()
+local Nebula = loadstring(game:HttpGet("https://github.com/lzhenweiDev/Nebula-UI/raw/refs/heads/main/V2.lua"))()
 
 local Window = Nebula.CreateWindow({
     Title = "Nebula Demo",
@@ -510,8 +510,8 @@ Window:Notify({
 
 # 📄 License
 
-This project is free to use and modify.
-
+This project is free to use and modify. Use source.lua for modifying.
+*Nebula V2 is currently the latest version which isn't for modifying*
 Please keep credits if you redistribute the library.
 
 ---
