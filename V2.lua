@@ -18,7 +18,7 @@ local Players = game:GetService("Players")
 -- =====================================================================
 -- CONSTANTS
 -- =====================================================================
-local TWEEN_SPEED = 0.2
+local TWEEN_SPEED = 0.16
 local CORNER_RADIUS = 8
 local FONT = Enum.Font.Gotham
 local FONT_BOLD = Enum.Font.GothamBold
@@ -28,20 +28,20 @@ local FONT_BOLD = Enum.Font.GothamBold
 -- =====================================================================
 local Themes = {
     Amethyst = {
-        Background = Color3.fromRGB(15, 10, 25),
-        Background2 = Color3.fromRGB(10, 6, 18),
-        Surface = Color3.fromRGB(25, 18, 40),
-        Surface2 = Color3.fromRGB(20, 14, 32),
-        Text = Color3.fromRGB(230, 220, 255),
-        TextDim = Color3.fromRGB(150, 140, 180),
+        Background = Color3.fromRGB(9, 7, 16),
+        Background2 = Color3.fromRGB(13, 9, 22),
+        Surface = Color3.fromRGB(29, 22, 46),
+        Surface2 = Color3.fromRGB(23, 17, 38),
+        Text = Color3.fromRGB(245, 241, 255),
+        TextDim = Color3.fromRGB(180, 168, 214),
         Accent = Color3.fromRGB(140, 80, 255),
         AccentHover = Color3.fromRGB(160, 110, 255),
         AccentGlow = Color3.fromRGB(180, 130, 255),
         Danger = Color3.fromRGB(255, 70, 70),
         Success = Color3.fromRGB(80, 220, 120),
         Warning = Color3.fromRGB(255, 180, 50),
-        Border = Color3.fromRGB(60, 45, 90),
-        Shadow = Color3.fromRGB(0, 0, 0),
+        Border = Color3.fromRGB(78, 62, 116),
+        Shadow = Color3.fromRGB(3, 2, 8),
         Gloss = true,
     },
     Dark = {
@@ -94,7 +94,7 @@ local function Create(className, properties)
 end
 
 local function Tween(obj, props, duration, easing, dir)
-    local t = TweenService:Create(obj, TweenInfo.new(duration or TWEEN_SPEED, easing or Enum.EasingStyle.Quad, dir or Enum.EasingDirection.Out), props)
+    local t = TweenService:Create(obj, TweenInfo.new(duration or TWEEN_SPEED, easing or Enum.EasingStyle.Quint, dir or Enum.EasingDirection.Out), props)
     t:Play()
     return t
 end
@@ -106,10 +106,10 @@ end
 local function AddGloss(obj)
     local gloss = Create("Frame", {
         Parent = obj,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BackgroundTransparency = 0.92,
+        BackgroundColor3 = Color3.fromRGB(248, 244, 255),
+        BackgroundTransparency = 0.97,
         BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0.5, 0),
+        Size = UDim2.new(1, 0, 0.32, 0),
         Position = UDim2.new(0, 0, 0, 0),
         ZIndex = 99,
     })
@@ -123,7 +123,7 @@ local function AddShadow(obj, transparency, size)
         BackgroundTransparency = 1,
         Image = "rbxassetid://6014261993",
         ImageColor3 = CurrentTheme.Shadow,
-        ImageTransparency = transparency or 0.6,
+        ImageTransparency = transparency or 0.78,
         ScaleType = Enum.ScaleType.Slice,
         SliceCenter = Rect.new(49, 49, 450, 450),
         Size = UDim2.new(1, size or 8, 1, size or 8),
@@ -302,8 +302,9 @@ local function ShowLoadingScreen(config)
     -- Progress bar background
     local barBg = Create("Frame", {
         Parent = container,
-        BackgroundColor3 = Color3.fromRGB(30, 30, 40),
-        BorderSizePixel = 0,
+        BackgroundColor3 = CurrentTheme.Surface2,
+        BorderColor3 = CurrentTheme.Border,
+        BorderSizePixel = 1,
         Position = UDim2.new(0.1, 0, 0, 88),
         Size = UDim2.new(0.8, 0, 0, 8),
         ZIndex = 1001,
@@ -836,9 +837,9 @@ function Nebula.CreateButton(page, config)
     if CurrentTheme.Gloss then AddGloss(btn) end
     
     btn.MouseEnter:Connect(function()
-        Tween(btn, {BackgroundColor3 = Color3.fromRGB(math.min(color.R*255+30,255)/255, math.min(color.G*255+30,255)/255, math.min(color.B*255+30,255)/255)}, 0.1)
+        Tween(btn, {BackgroundColor3 = color:Lerp(Color3.fromRGB(255, 255, 255), 0.12)}, 0.12)
     end)
-    btn.MouseLeave:Connect(function() Tween(btn, {BackgroundColor3 = color}, 0.1) end)
+    btn.MouseLeave:Connect(function() Tween(btn, {BackgroundColor3 = color}, 0.12) end)
     
     btn.MouseButton1Click:Connect(function()
         Tween(btn, {Size = UDim2.new(0.95, 0, 0, 32)}, 0.05)
@@ -884,8 +885,9 @@ function Nebula.CreateSlider(page, config)
     
     local sliderBg = Create("Frame", {
         Parent = frame,
-        BackgroundColor3 = Color3.fromRGB(40, 40, 50),
-        BorderSizePixel = 0,
+        BackgroundColor3 = CurrentTheme.Surface2,
+        BorderColor3 = CurrentTheme.Border,
+        BorderSizePixel = 1,
         Position = UDim2.new(0, 12, 0, 24),
         Size = UDim2.new(1, -70, 0, 6),
         ZIndex = 2,
@@ -903,13 +905,14 @@ function Nebula.CreateSlider(page, config)
     
     local input = Create("TextBox", {
         Parent = frame,
-        BackgroundColor3 = Color3.fromRGB(25, 25, 35),
-        BorderSizePixel = 0,
+        BackgroundColor3 = CurrentTheme.Background2,
+        BorderColor3 = CurrentTheme.Border,
+        BorderSizePixel = 1,
         Position = UDim2.new(1, -54, 0, 26),
         Size = UDim2.new(0, 44, 0, 18),
         Font = Enum.Font.Code,
         Text = tostring(default),
-        TextColor3 = Color3.fromRGB(200, 255, 200),
+        TextColor3 = CurrentTheme.Text,
         TextSize = 10,
         ZIndex = 2,
     })
@@ -977,8 +980,9 @@ function Nebula.CreateDropdown(page, config)
     
     local dropBtn = Create("TextButton", {
         Parent = frame,
-        BackgroundColor3 = Color3.fromRGB(25, 25, 35),
-        BorderSizePixel = 0,
+        BackgroundColor3 = CurrentTheme.Background2,
+        BorderColor3 = CurrentTheme.Border,
+        BorderSizePixel = 1,
         Position = UDim2.new(1, -130, 0.5, -11),
         Size = UDim2.new(0, 118, 0, 22),
         Font = FONT_BOLD,
@@ -992,8 +996,9 @@ function Nebula.CreateDropdown(page, config)
     
     local dropList = Create("ScrollingFrame", {
         Parent = frame,
-        BackgroundColor3 = Color3.fromRGB(20, 20, 30),
-        BorderSizePixel = 0,
+        BackgroundColor3 = CurrentTheme.Background2,
+        BorderColor3 = CurrentTheme.Border,
+        BorderSizePixel = 1,
         Position = UDim2.new(1, -130, 0, 0),
         Size = UDim2.new(0, 118, 0, 0),
         ScrollBarThickness = 2,
@@ -1013,13 +1018,13 @@ function Nebula.CreateDropdown(page, config)
         for _, child in pairs(dropList:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
         for _, opt in pairs(newOptions) do
             local optBtn = Create("TextButton", {
-                Parent = dropList, BackgroundColor3 = Color3.fromRGB(25, 25, 35), BorderSizePixel = 0,
+                Parent = dropList, BackgroundColor3 = CurrentTheme.Surface2, BorderSizePixel = 0,
                 Size = UDim2.new(1, 0, 0, 24), Font = FONT, Text = opt, TextColor3 = CurrentTheme.Text,
                 TextSize = 10, AutoButtonColor = false, ZIndex = 11,
             })
             AddCorner(optBtn, 4)
-            optBtn.MouseEnter:Connect(function() Tween(optBtn, {BackgroundColor3 = Color3.fromRGB(50, 50, 60)}, 0.1) end)
-            optBtn.MouseLeave:Connect(function() Tween(optBtn, {BackgroundColor3 = Color3.fromRGB(25, 25, 35)}, 0.1) end)
+            optBtn.MouseEnter:Connect(function() Tween(optBtn, {BackgroundColor3 = CurrentTheme.Surface}, 0.1) end)
+            optBtn.MouseLeave:Connect(function() Tween(optBtn, {BackgroundColor3 = CurrentTheme.Surface2}, 0.1) end)
             optBtn.MouseButton1Click:Connect(function()
                 currentValue = opt; dropBtn.Text = opt; dropList.Visible = false; callback(opt); events.OnChanged:Fire(opt)
             end)
@@ -1054,10 +1059,10 @@ function Nebula.CreateTextBox(page, config)
     if CurrentTheme.Gloss then AddGloss(frame) end
     
     local input = Create("TextBox", {
-        Parent = frame, BackgroundColor3 = Color3.fromRGB(20, 20, 28), BorderSizePixel = 0,
+        Parent = frame, BackgroundColor3 = CurrentTheme.Background2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1,
         Position = UDim2.new(0, 10, 0.5, -10), Size = UDim2.new(1, -20, 0, 20),
         Font = FONT, PlaceholderText = config.Placeholder or "Enter text...",
-        PlaceholderColor3 = Color3.fromRGB(100, 100, 110), Text = config.Default or "",
+        PlaceholderColor3 = CurrentTheme.TextDim, Text = config.Default or "",
         TextColor3 = CurrentTheme.Text, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left,
         ClearTextOnFocus = false, ZIndex = 2,
     })
@@ -1087,7 +1092,7 @@ function Nebula.CreateKeybind(page, config)
     })
     
     local keyBtn = Create("TextButton", {
-        Parent = frame, BackgroundColor3 = Color3.fromRGB(25, 25, 35), BorderSizePixel = 0,
+        Parent = frame, BackgroundColor3 = CurrentTheme.Background2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1,
         Position = UDim2.new(1, -80, 0.5, -10), Size = UDim2.new(0, 70, 0, 20),
         Font = FONT_BOLD, Text = "[" .. (config.Default or "None") .. "]", TextColor3 = CurrentTheme.Text,
         TextSize = 10, AutoButtonColor = false, ZIndex = 2,
@@ -1121,8 +1126,8 @@ function Nebula.CreateCheckbox(page, config)
     if CurrentTheme.Gloss then AddGloss(frame) end
     
     local checkbox = Create("TextButton", {
-        Parent = frame, BackgroundColor3 = (config.Default and CurrentTheme.Accent or Color3.fromRGB(40, 40, 50)),
-        BorderSizePixel = 0, Position = UDim2.new(0, 12, 0.5, -9), Size = UDim2.new(0, 18, 0, 18),
+        Parent = frame, BackgroundColor3 = (config.Default and CurrentTheme.Accent or CurrentTheme.Surface2),
+        BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1, Position = UDim2.new(0, 12, 0.5, -9), Size = UDim2.new(0, 18, 0, 18),
         Font = FONT_BOLD, Text = config.Default and "✓" or "", TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 12, AutoButtonColor = false, ZIndex = 2,
     })
@@ -1140,7 +1145,7 @@ function Nebula.CreateCheckbox(page, config)
     frame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             state = not state
-            checkbox.BackgroundColor3 = state and CurrentTheme.Accent or Color3.fromRGB(40, 40, 50)
+            checkbox.BackgroundColor3 = state and CurrentTheme.Accent or CurrentTheme.Surface2
             checkbox.Text = state and "✓" or ""
             if config.Callback then config.Callback(state) end; events.OnChanged:Fire(state)
         end
@@ -1176,7 +1181,7 @@ function Nebula.CreateColorPicker(page, config)
     local events = {OnChanged = Event.new()}
     
     local popup = Create("Frame", {
-        Parent = frame, BackgroundColor3 = Color3.fromRGB(20, 20, 30), BorderSizePixel = 0,
+        Parent = frame, BackgroundColor3 = CurrentTheme.Background2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1,
         Position = UDim2.new(0, 0, 1, 4), Size = UDim2.new(1, 0, 0, 0), Visible = false, ClipsDescendants = true, ZIndex = 20,
     })
     AddCorner(popup, 8)
@@ -1185,9 +1190,9 @@ function Nebula.CreateColorPicker(page, config)
     for i, c in pairs(colors) do
         local row = Create("Frame", {Parent = popup, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 22)})
         Create("TextLabel", {Parent = row, BackgroundTransparency = 1, Position = UDim2.new(0, 6, 0, 0), Size = UDim2.new(0, 16, 1, 0), Font = FONT_BOLD, Text = c, TextColor3 = Color3.fromRGB(255,255,255), TextSize = 10, ZIndex = 21})
-        local bg = Create("Frame", {Parent = row, BackgroundColor3 = Color3.fromRGB(40,40,50), BorderSizePixel = 0, Position = UDim2.new(0, 26, 0.5, -3), Size = UDim2.new(1, -70, 0, 6), ZIndex = 21})
+        local bg = Create("Frame", {Parent = row, BackgroundColor3 = CurrentTheme.Surface2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1, Position = UDim2.new(0, 26, 0.5, -3), Size = UDim2.new(1, -70, 0, 6), ZIndex = 21})
         local fill = Create("Frame", {Parent = bg, BackgroundColor3 = i==1 and Color3.fromRGB(255,0,0) or i==2 and Color3.fromRGB(0,255,0) or Color3.fromRGB(0,0,255), BorderSizePixel = 0, Size = UDim2.new(values[i]/255, 0, 1, 0), ZIndex = 22})
-        local inp = Create("TextBox", {Parent = row, BackgroundColor3 = Color3.fromRGB(25,25,35), BorderSizePixel = 0, Position = UDim2.new(1, -40, 0.5, -8), Size = UDim2.new(0, 34, 0, 16), Font = Enum.Font.Code, Text = tostring(values[i]), TextColor3 = Color3.fromRGB(255,255,255), TextSize = 9, ZIndex = 21})
+        local inp = Create("TextBox", {Parent = row, BackgroundColor3 = CurrentTheme.Background2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1, Position = UDim2.new(1, -40, 0.5, -8), Size = UDim2.new(0, 34, 0, 16), Font = Enum.Font.Code, Text = tostring(values[i]), TextColor3 = CurrentTheme.Text, TextSize = 9, ZIndex = 21})
         
         bg.InputBegan:Connect(function(ib)
             if ib.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1238,7 +1243,7 @@ function Nebula.CreateProgressBar(page, config)
     })
     
     local bg = Create("Frame", {
-        Parent = frame, BackgroundColor3 = Color3.fromRGB(40, 40, 50), BorderSizePixel = 0,
+        Parent = frame, BackgroundColor3 = CurrentTheme.Surface2, BorderColor3 = CurrentTheme.Border, BorderSizePixel = 1,
         Position = UDim2.new(0, 12, 0, 20), Size = UDim2.new(1, -24, 0, 10), ZIndex = 2,
     })
     AddCorner(bg, 5)
