@@ -33,7 +33,7 @@ A modern, customizable Roblox UI Library with a glossy purple theme, smooth anim
 Load the library.
 
 ```lua
-local Nebula = loadstring(game:HttpGet("YOUR_RAW_URL"))()
+local Nebula = loadstring(game:HttpGet("https://github.com/lzhenweiDev/Nebula-UI/raw/refs/heads/main/V2.lua"))()
 ```
 
 Replace:
