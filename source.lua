@@ -11,6 +11,7 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local TextService = game:GetService("TextService")
 
@@ -18,12 +19,16 @@ local TextService = game:GetService("TextService")
 local Settings = {
     AnimationSpeed = 0.16,
     CornerRadius = 10,
-    AccentColor = Color3.fromRGB(96, 146, 255),
-    DarkColor = Color3.fromRGB(20, 21, 30),
-    DarkerColor = Color3.fromRGB(14, 15, 22),
-    LighterColor = Color3.fromRGB(28, 30, 42),
-    TextColor = Color3.fromRGB(232, 234, 240),
-    DimTextColor = Color3.fromRGB(150, 156, 170),
+    AccentColor = Color3.fromRGB(151, 79, 255),
+    AccentHover = Color3.fromRGB(172, 114, 255),
+    AccentGlow = Color3.fromRGB(201, 155, 255),
+    DarkColor = Color3.fromRGB(12, 8, 20),
+    DarkerColor = Color3.fromRGB(18, 12, 30),
+    LighterColor = Color3.fromRGB(32, 21, 52),
+    Surface2 = Color3.fromRGB(24, 16, 40),
+    TextColor = Color3.fromRGB(239, 242, 248),
+    DimTextColor = Color3.fromRGB(185, 170, 214),
+    BorderColor = Color3.fromRGB(82, 58, 122),
 }
 
 -- =====================================================================
@@ -69,6 +74,101 @@ local function AddStroke(obj, color, thickness, transparency)
         Parent = obj
     })
     return stroke
+end
+
+local function ResolvePage(tab)
+    if typeof(tab) == "Instance" then
+        return tab
+    end
+    if type(tab) == "table" and tab.Page then
+        return tab.Page
+    end
+    return tab
+end
+
+local function ShowLoadingScreen(config)
+    local steps = config.Steps or {"Initializing UI...", "Loading components...", "Applying theme...", "Ready!"}
+    local duration = config.Duration or 3
+    local callback = config.Callback or function() end
+
+    local SG = Create("ScreenGui", {
+        Name = "NebulaLoading",
+        Parent = CoreGui,
+        ResetOnSpawn = false,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+    })
+
+    local bg = Create("Frame", {
+        Parent = SG,
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 1, 0),
+    })
+
+    local box = Create("Frame", {
+        Parent = bg,
+        BackgroundColor3 = Settings.DarkColor,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.5, -160, 0.5, -70),
+        Size = UDim2.new(0, 320, 0, 140),
+    })
+    AddCorner(box, 14)
+    AddStroke(box, Settings.BorderColor, 1, 0.22)
+
+    local title = Create("TextLabel", {
+        Parent = box,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0, 14),
+        Size = UDim2.new(1, 0, 0, 20),
+        Font = Enum.Font.GothamBold,
+        Text = config.Title or "Nebula UI",
+        TextColor3 = Settings.AccentColor,
+        TextSize = 18,
+    })
+
+    local stepLabel = Create("TextLabel", {
+        Parent = box,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0, 46),
+        Size = UDim2.new(1, 0, 0, 18),
+        Font = Enum.Font.Gotham,
+        Text = steps[1],
+        TextColor3 = Settings.DimTextColor,
+        TextSize = 11,
+    })
+
+    local barBg = Create("Frame", {
+        Parent = box,
+        BackgroundColor3 = Settings.Surface2,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 32, 0, 82),
+        Size = UDim2.new(1, -64, 0, 8),
+    })
+    AddCorner(barBg, 4)
+
+    local barFill = Create("Frame", {
+        Parent = barBg,
+        BackgroundColor3 = Settings.AccentColor,
+        BorderSizePixel = 0,
+        Size = UDim2.new(0, 0, 1, 0),
+    })
+    AddCorner(barFill, 4)
+
+    Tween(bg, {BackgroundTransparency = 0.55}, 0.22)
+    local stepTime = duration / math.max(#steps, 1)
+    for i = 1, #steps do
+        task.delay((i - 1) * stepTime, function()
+            stepLabel.Text = steps[i]
+            Tween(barFill, {Size = UDim2.new(i / #steps, 0, 1, 0)}, stepTime * 0.8)
+        end)
+    end
+
+    task.delay(duration, function()
+        Tween(bg, {BackgroundTransparency = 1}, 0.2)
+        task.wait(0.2)
+        SG:Destroy()
+        callback()
+    end)
 end
 
 -- =====================================================================
@@ -118,64 +218,66 @@ end
 function Nebula.CreateWindow(config)
     config = config or {}
     local title = config.Title or "Nebula UI"
-    local subtitle = config.Subtitle or ""
-    
-    -- Destroy existing
+    local showLoading = config.ShowLoading == true
+
     if CoreGui:FindFirstChild("NebulaUI") then
         CoreGui.NebulaUI:Destroy()
     end
-    
+
+    if showLoading then
+        ShowLoadingScreen({
+            Title = title,
+            Steps = config.LoadingSteps or {"Initializing UI...", "Loading components...", "Applying theme...", "Ready!"},
+            Duration = config.LoadingDuration or 3,
+        })
+    end
+
     local window = {}
     setmetatable(window, Nebula)
-    
-    -- Main ScreenGui
+
     local SG = Create("ScreenGui", {
         Name = "NebulaUI",
         Parent = CoreGui,
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
     })
-    
-    -- Main Frame
+
     local Main = Create("Frame", {
         Parent = SG,
         BackgroundColor3 = Settings.DarkColor,
         BorderSizePixel = 0,
-        Position = UDim2.new(0.5, -250, 0.5, -175),
-        Size = UDim2.new(0, 500, 0, 350),
+        Position = UDim2.new(0.5, -275, 0.5, -200),
+        Size = UDim2.new(0, 550, 0, 400),
         Active = true,
         ClipsDescendants = true,
     })
     AddCorner(Main, 12)
-    AddStroke(Main, Color3.fromRGB(255, 255, 255), 1, 0.92)
-    
-    -- Shadow effect
+    AddStroke(Main, Settings.BorderColor, 1, 0.82)
+
     local Shadow = Create("Frame", {
         Parent = SG,
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-        BackgroundTransparency = 0.74,
+        BackgroundTransparency = 0.72,
         BorderSizePixel = 0,
-        Position = UDim2.new(0.5, -248, 0.5, -173),
-        Size = UDim2.new(0, 500, 0, 350),
+        Position = UDim2.new(0.5, -273, 0.5, -198),
+        Size = UDim2.new(0, 550, 0, 400),
         ZIndex = -1,
     })
     AddCorner(Shadow, 12)
-    
-    -- Title Bar
+
     local TitleBar = Create("Frame", {
         Parent = Main,
         BackgroundColor3 = Settings.DarkerColor,
         BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0, 40),
+        Size = UDim2.new(1, 0, 0, 42),
         ZIndex = 2,
     })
     AddCorner(TitleBar, 12)
-    AddStroke(TitleBar, Color3.fromRGB(255, 255, 255), 1, 0.94)
-    
-    -- Title Bar Accent Line
+    AddStroke(TitleBar, Settings.BorderColor, 1, 0.9)
+
     local TitleAccent = Create("Frame", {
         Parent = TitleBar,
-        BackgroundColor3 = Settings.AccentColor,
+        BackgroundColor3 = Settings.AccentGlow,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 2),
         Position = UDim2.new(0, 0, 1, 0),
@@ -192,138 +294,139 @@ function Nebula.CreateWindow(config)
         ZIndex = 4,
     })
     AddCorner(TitleMark, 4)
-    
-    -- Title Text
+
     local TitleLabel = Create("TextLabel", {
         Parent = TitleBar,
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 24, 0, 0),
-        Size = UDim2.new(1, -60, 1, 0),
+        Size = UDim2.new(1, -120, 1, 0),
         Font = Enum.Font.GothamBold,
         Text = title,
         TextColor3 = Settings.TextColor,
-        TextSize = 13,
+        TextSize = 14,
         TextXAlignment = Enum.TextXAlignment.Left,
         ZIndex = 3,
     })
-    
-    -- Close Button
+
+    local minimized = false
+
     local CloseBtn = Create("TextButton", {
         Parent = TitleBar,
-        BackgroundColor3 = Color3.fromRGB(60, 30, 30),
+        BackgroundColor3 = Color3.fromRGB(200, 50, 50),
         BorderSizePixel = 0,
-        Position = UDim2.new(1, -34, 0, 7),
+        Position = UDim2.new(1, -34, 0, 8),
         Size = UDim2.new(0, 26, 0, 26),
         Font = Enum.Font.GothamBold,
         Text = "✕",
-        TextColor3 = Color3.fromRGB(255, 100, 100),
+        TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 14,
-        ZIndex = 3,
         AutoButtonColor = false,
+        ZIndex = 3,
     })
     AddCorner(CloseBtn, 6)
-    
-    CloseBtn.MouseButton1Click:Connect(function()
-        Tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-        task.wait(0.15)
-        SG:Destroy()
-    end)
-    
-    -- Minimize Button
-    local minimized = false
+    CloseBtn.MouseButton1Click:Connect(function() window:Destroy() end)
+
     local MinBtn = Create("TextButton", {
         Parent = TitleBar,
-        BackgroundColor3 = Color3.fromRGB(36, 38, 54),
+        BackgroundColor3 = Color3.fromRGB(60, 60, 70),
         BorderSizePixel = 0,
-        Position = UDim2.new(1, -66, 0, 7),
+        Position = UDim2.new(1, -66, 0, 8),
         Size = UDim2.new(0, 26, 0, 26),
         Font = Enum.Font.GothamBold,
         Text = "−",
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 16,
-        ZIndex = 3,
         AutoButtonColor = false,
+        ZIndex = 3,
     })
     AddCorner(MinBtn, 6)
-    AddStroke(MinBtn, Color3.fromRGB(255, 255, 255), 1, 0.9)
-    
-    MinBtn.MouseButton1Click:Connect(function()
-        minimized = not minimized
-        if minimized then
-            Tween(Main, {Size = UDim2.new(0, 500, 0, 40)})
-            Tween(Shadow, {Size = UDim2.new(0, 500, 0, 40)})
-            MinBtn.Text = "+"
-        else
-            Tween(Main, {Size = UDim2.new(0, 500, 0, 350)})
-            Tween(Shadow, {Size = UDim2.new(0, 500, 0, 350)})
-            MinBtn.Text = "−"
-        end
-    end)
-    
-    -- Make draggable
+    MinBtn.MouseButton1Click:Connect(function() window:Minimize() end)
+
     MakeDraggable(Main, TitleBar)
     MakeDraggable(Shadow, TitleBar)
-    
-    -- Tab Container
+
     local TabContainer = Create("Frame", {
         Parent = Main,
         BackgroundColor3 = Settings.DarkerColor,
         BorderSizePixel = 0,
-        Position = UDim2.new(0, 0, 0, 40),
-        Size = UDim2.new(0, 128, 1, -40),
+        Position = UDim2.new(0, 0, 0, 42),
+        Size = UDim2.new(0, 140, 1, -42),
         ZIndex = 1,
     })
-    AddStroke(TabContainer, Color3.fromRGB(255, 255, 255), 1, 0.94)
-    
-    local TabList = Create("UIListLayout", {
+    AddStroke(TabContainer, Settings.BorderColor, 1, 0.9)
+
+    Create("UIListLayout", {
         Parent = TabContainer,
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 6),
+        Padding = UDim.new(0, 2),
     })
-    
-    local TabPadding = Create("UIPadding", {
+
+    Create("UIPadding", {
         Parent = TabContainer,
         PaddingTop = UDim.new(0, 8),
         PaddingLeft = UDim.new(0, 8),
         PaddingRight = UDim.new(0, 8),
     })
-    
-    -- Content Area
+
     local ContentArea = Create("Frame", {
         Parent = Main,
         BackgroundColor3 = Settings.DarkColor,
         BorderSizePixel = 0,
-        Position = UDim2.new(0, 128, 0, 40),
-        Size = UDim2.new(1, -128, 1, -40),
+        Position = UDim2.new(0, 140, 0, 42),
+        Size = UDim2.new(1, -140, 1, -42),
         ZIndex = 1,
     })
-    AddStroke(ContentArea, Color3.fromRGB(255, 255, 255), 1, 0.95)
-    
-    -- Content Pages Container
+    AddStroke(ContentArea, Settings.BorderColor, 1, 0.94)
+
     local PageContainer = Create("Frame", {
         Parent = ContentArea,
         BackgroundTransparency = 1,
         Size = UDim2.new(1, 0, 1, 0),
         ClipsDescendants = true,
     })
-    
-    -- Store references
+
     window.SG = SG
     window.Main = Main
+    window.Shadow = Shadow
+    window.TitleBar = TitleBar
     window.TabContainer = TabContainer
     window.PageContainer = PageContainer
     window.Tabs = {}
     window.Pages = {}
     window.currentTab = nil
-    
-    -- =====================================================================
-    -- ANIMATE IN
-    -- =====================================================================
+    window.Minimized = false
+
+    function window:Destroy()
+        Tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+        Tween(Shadow, {Size = UDim2.new(0, 0, 0, 0)}, 0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+        task.wait(0.15)
+        if SG and SG.Parent then
+            SG:Destroy()
+        end
+    end
+
+    function window:Minimize()
+        self.Minimized = not self.Minimized
+        if self.Minimized then
+            Tween(Main, {Size = UDim2.new(0, 550, 0, 42)}, 0.22)
+            Tween(Shadow, {Size = UDim2.new(0, 550, 0, 42)}, 0.22)
+            MinBtn.Text = "+"
+        else
+            Tween(Main, {Size = UDim2.new(0, 550, 0, 400)}, 0.22)
+            Tween(Shadow, {Size = UDim2.new(0, 550, 0, 400)}, 0.22)
+            MinBtn.Text = "−"
+        end
+    end
+
+    function window:Notify(notifyConfig)
+        Nebula.Notify(self, notifyConfig)
+    end
+
     Main.Size = UDim2.new(0, 0, 0, 0)
     Shadow.Size = UDim2.new(0, 0, 0, 0)
-    Tween(Main, {Size = UDim2.new(0, 500, 0, 350)}, 0.35, Enum.EasingStyle.Back)
-    Tween(Shadow, {Size = UDim2.new(0, 500, 0, 350)}, 0.35, Enum.EasingStyle.Back)
-    
+    Tween(Main, {Size = UDim2.new(0, 550, 0, 400)}, 0.32, Enum.EasingStyle.Back)
+    Tween(Shadow, {Size = UDim2.new(0, 550, 0, 400)}, 0.32, Enum.EasingStyle.Back)
+
     return window
 end
 
@@ -335,23 +438,23 @@ function Nebula:CreateTab(name, icon)
     
     local tabBtn = Create("TextButton", {
         Parent = self.TabContainer,
-        BackgroundColor3 = Settings.DarkerColor,
+        BackgroundColor3 = Settings.LighterColor,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 34),
         Font = Enum.Font.GothamBold,
         Text = icon .. "  " .. name,
         TextColor3 = Settings.TextColor,
-        TextSize = 10,
+        TextSize = 11,
         TextXAlignment = Enum.TextXAlignment.Left,
         AutoButtonColor = false,
         ZIndex = 2,
     })
     AddCorner(tabBtn, 6)
-    AddStroke(tabBtn, Color3.fromRGB(255, 255, 255), 1, 0.94)
+    AddStroke(tabBtn, Settings.BorderColor, 1, 0.88)
 
     local activeBar = Create("Frame", {
         Parent = tabBtn,
-        BackgroundColor3 = Settings.AccentColor,
+        BackgroundColor3 = Settings.AccentGlow,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 6),
         Size = UDim2.new(0, 3, 1, -12),
@@ -392,11 +495,11 @@ function Nebula:CreateTab(name, icon)
     tabBtn.MouseButton1Click:Connect(function()
         for _, p in pairs(self.Pages) do p.Visible = false end
         for _, t in pairs(self.Tabs) do
-            Tween(t.Button, {BackgroundColor3 = Settings.DarkerColor}, 0.12)
+            Tween(t.Button, {BackgroundColor3 = Settings.LighterColor}, 0.12)
             t.ActiveBar.Visible = false
         end
         page.Visible = true
-        Tween(tabBtn, {BackgroundColor3 = LerpColor(Settings.AccentColor, Color3.fromRGB(24, 24, 34), 0.72)}, 0.12)
+        Tween(tabBtn, {BackgroundColor3 = Settings.AccentColor}, 0.12)
         activeBar.Visible = true
         self.currentTab = name
     end)
@@ -404,7 +507,7 @@ function Nebula:CreateTab(name, icon)
     -- Select first tab
     if #self.Tabs == 0 then
         page.Visible = true
-        Tween(tabBtn, {BackgroundColor3 = LerpColor(Settings.AccentColor, Color3.fromRGB(24, 24, 34), 0.72)}, 0.1)
+        Tween(tabBtn, {BackgroundColor3 = Settings.AccentColor}, 0.1)
         activeBar.Visible = true
         self.currentTab = name
     end
@@ -412,22 +515,28 @@ function Nebula:CreateTab(name, icon)
     table.insert(self.Tabs, {Button = tabBtn, ActiveBar = activeBar})
     table.insert(self.Pages, page)
     
-    return page
+    return {Window = self, Page = page, Name = name, Button = tabBtn, ActiveBar = activeBar}
 end
 
 -- =====================================================================
 -- SECTIONS
 -- =====================================================================
 function Nebula:CreateSection(page, name)
+    local resolvedPage = ResolvePage(page)
+    local sectionName = name
+    if type(name) == "table" then
+        sectionName = name.Name or ""
+    end
+
     local section = Create("Frame", {
-        Parent = page,
+        Parent = resolvedPage,
         BackgroundColor3 = Settings.DarkerColor,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 30),
         ZIndex = 1,
     })
     AddCorner(section, 6)
-    AddStroke(section, Color3.fromRGB(255, 255, 255), 1, 0.94)
+    AddStroke(section, Settings.BorderColor, 1, 0.9)
     
     local accent = Create("Frame", {
         Parent = section,
@@ -444,14 +553,26 @@ function Nebula:CreateSection(page, name)
         Position = UDim2.new(0, 10, 0, 0),
         Size = UDim2.new(1, -20, 1, 0),
         Font = Enum.Font.GothamBold,
-        Text = name,
-        TextColor3 = LerpColor(Settings.AccentColor, Color3.fromRGB(255, 255, 255), 0.18),
-        TextSize = 10,
+        Text = sectionName or "",
+        TextColor3 = Settings.AccentHover,
+        TextSize = 11,
         TextXAlignment = Enum.TextXAlignment.Left,
         ZIndex = 2,
     })
-    
-    return section
+
+    local self = {Page = resolvedPage, Section = section}
+    function self:CreateToggle(cfg) return Nebula.CreateToggle(resolvedPage, cfg) end
+    function self:CreateButton(cfg) return Nebula.CreateButton(resolvedPage, cfg) end
+    function self:CreateSlider(cfg) return Nebula.CreateSlider(resolvedPage, cfg) end
+    function self:CreateDropdown(cfg) return Nebula.CreateDropdown(resolvedPage, cfg) end
+    function self:CreateLabel(cfg) return Nebula.CreateLabel(resolvedPage, cfg) end
+    function self:CreateTextBox(cfg) return Nebula.CreateTextBox(resolvedPage, cfg) end
+    function self:CreateKeybind(cfg) return Nebula.CreateKeybind(resolvedPage, cfg) end
+    function self:CreateCheckbox(cfg) return Nebula.CreateCheckbox(resolvedPage, cfg) end
+    function self:CreateColorPicker(cfg) return Nebula.CreateColorPicker(resolvedPage, cfg) end
+    function self:CreateProgressBar(cfg) return Nebula.CreateProgressBar(resolvedPage, cfg) end
+
+    return self
 end
 
 -- =====================================================================
@@ -925,6 +1046,288 @@ function Nebula:CreateKeybind(page, config)
     end)
     
     return {Set = function(k) currentKey = k; keyBtn.Text = "[" .. k .. "]" end, Value = currentKey}
+end
+
+-- =====================================================================
+-- CHECKBOX
+-- =====================================================================
+function Nebula:CreateCheckbox(page, config)
+    config = config or {}
+    local name = config.Name or "Checkbox"
+    local default = config.Default or false
+    local callback = config.Callback or function() end
+
+    local frame = Create("Frame", {
+        Parent = page,
+        BackgroundColor3 = Settings.LighterColor,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 38),
+        ZIndex = 1,
+    })
+    AddCorner(frame, 8)
+    AddStroke(frame, Settings.BorderColor, 1, 0.9)
+
+    local box = Create("TextButton", {
+        Parent = frame,
+        BackgroundColor3 = default and Settings.AccentColor or Settings.DarkerColor,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 12, 0.5, -9),
+        Size = UDim2.new(0, 18, 0, 18),
+        Font = Enum.Font.GothamBold,
+        Text = default and "✓" or "",
+        TextColor3 = Settings.TextColor,
+        TextSize = 12,
+        AutoButtonColor = false,
+        ZIndex = 2,
+    })
+    AddCorner(box, 4)
+
+    Create("TextLabel", {
+        Parent = frame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 38, 0, 0),
+        Size = UDim2.new(1, -50, 1, 0),
+        Font = Enum.Font.Gotham,
+        Text = name,
+        TextColor3 = Settings.TextColor,
+        TextSize = 11,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 2,
+    })
+
+    local state = default
+    local function update(v)
+        state = v
+        Tween(box, {BackgroundColor3 = state and Settings.AccentColor or Settings.DarkerColor}, 0.12)
+        box.Text = state and "✓" or ""
+        callback(state)
+    end
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            update(not state)
+        end
+    end)
+
+    return {Set = update, Get = function() return state end, Value = state}
+end
+
+-- =====================================================================
+-- COLOR PICKER
+-- =====================================================================
+function Nebula:CreateColorPicker(page, config)
+    config = config or {}
+    local name = config.Name or "Color"
+    local default = config.Default or Settings.AccentColor
+    local callback = config.Callback or function() end
+
+    local frame = Create("Frame", {
+        Parent = page,
+        BackgroundColor3 = Settings.LighterColor,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 38),
+        ZIndex = 1,
+    })
+    AddCorner(frame, 8)
+    AddStroke(frame, Settings.BorderColor, 1, 0.9)
+
+    Create("TextLabel", {
+        Parent = frame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 12, 0, 0),
+        Size = UDim2.new(1, -60, 1, 0),
+        Font = Enum.Font.Gotham,
+        Text = name,
+        TextColor3 = Settings.TextColor,
+        TextSize = 11,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 2,
+    })
+
+    local preview = Create("TextButton", {
+        Parent = frame,
+        BackgroundColor3 = default,
+        BorderSizePixel = 0,
+        Position = UDim2.new(1, -44, 0.5, -10),
+        Size = UDim2.new(0, 20, 0, 20),
+        Text = "",
+        AutoButtonColor = false,
+        ZIndex = 2,
+    })
+    AddCorner(preview, 10)
+
+    local popup = Create("Frame", {
+        Parent = frame,
+        BackgroundColor3 = Settings.DarkerColor,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 1, 4),
+        Size = UDim2.new(1, 0, 0, 0),
+        Visible = false,
+        ClipsDescendants = true,
+        ZIndex = 20,
+    })
+    AddCorner(popup, 8)
+    AddStroke(popup, Settings.BorderColor, 1, 0.9)
+
+    local values = {math.floor(default.R * 255), math.floor(default.G * 255), math.floor(default.B * 255)}
+    local colors = {"R", "G", "B"}
+
+    local function applyColor()
+        local color = Color3.fromRGB(values[1], values[2], values[3])
+        preview.BackgroundColor3 = color
+        callback(color)
+        return color
+    end
+
+    for i = 1, 3 do
+        local row = Create("Frame", {
+            Parent = popup,
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 0, 22),
+        })
+
+        Create("TextLabel", {
+            Parent = row,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 6, 0, 0),
+            Size = UDim2.new(0, 16, 1, 0),
+            Font = Enum.Font.GothamBold,
+            Text = colors[i],
+            TextColor3 = Settings.TextColor,
+            TextSize = 10,
+            ZIndex = 21,
+        })
+
+        local bg = Create("Frame", {
+            Parent = row,
+            BackgroundColor3 = Settings.Surface2,
+            BorderSizePixel = 0,
+            Position = UDim2.new(0, 28, 0.5, -3),
+            Size = UDim2.new(1, -74, 0, 6),
+            ZIndex = 21,
+        })
+        AddCorner(bg, 3)
+
+        local fill = Create("Frame", {
+            Parent = bg,
+            BackgroundColor3 = Settings.AccentGlow,
+            BorderSizePixel = 0,
+            Size = UDim2.new(values[i] / 255, 0, 1, 0),
+            ZIndex = 22,
+        })
+        AddCorner(fill, 3)
+
+        local input = Create("TextBox", {
+            Parent = row,
+            BackgroundColor3 = Settings.DarkerColor,
+            BorderSizePixel = 0,
+            Position = UDim2.new(1, -40, 0.5, -8),
+            Size = UDim2.new(0, 34, 0, 16),
+            Font = Enum.Font.Code,
+            Text = tostring(values[i]),
+            TextColor3 = Settings.TextColor,
+            TextSize = 9,
+            ZIndex = 21,
+        })
+        AddCorner(input, 4)
+
+        bg.InputBegan:Connect(function(ib)
+            if ib.UserInputType == Enum.UserInputType.MouseButton1 then
+                local conn = RunService.RenderStepped:Connect(function()
+                    local mouse = UserInputService:GetMouseLocation()
+                    local perc = math.clamp((mouse.X - bg.AbsolutePosition.X) / bg.AbsoluteSize.X, 0, 1)
+                    values[i] = math.floor(perc * 255)
+                    fill.Size = UDim2.new(perc, 0, 1, 0)
+                    input.Text = tostring(values[i])
+                    applyColor()
+                end)
+                UserInputService.InputEnded:Connect(function(ie)
+                    if ie.UserInputType == Enum.UserInputType.MouseButton1 then
+                        conn:Disconnect()
+                    end
+                end)
+            end
+        end)
+
+        input.FocusLost:Connect(function()
+            values[i] = math.clamp(tonumber(input.Text) or 0, 0, 255)
+            fill.Size = UDim2.new(values[i] / 255, 0, 1, 0)
+            applyColor()
+        end)
+    end
+
+    preview.MouseButton1Click:Connect(function()
+        popup.Visible = not popup.Visible
+        if popup.Visible then
+            Tween(popup, {Size = UDim2.new(1, 0, 0, 75)}, 0.18, Enum.EasingStyle.Sine)
+        else
+            Tween(popup, {Size = UDim2.new(1, 0, 0, 0)}, 0.14, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+        end
+    end)
+
+    applyColor()
+    return {Set = function(c) preview.BackgroundColor3 = c; callback(c) end, Get = function() return preview.BackgroundColor3 end, Value = preview.BackgroundColor3}
+end
+
+-- =====================================================================
+-- PROGRESS BAR
+-- =====================================================================
+function Nebula:CreateProgressBar(page, config)
+    config = config or {}
+    local value = config.Value or 0
+    local max = config.Max or 100
+
+    local frame = Create("Frame", {
+        Parent = page,
+        BackgroundColor3 = Settings.LighterColor,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 42),
+        ZIndex = 1,
+    })
+    AddCorner(frame, 8)
+    AddStroke(frame, Settings.BorderColor, 1, 0.9)
+
+    local label = Create("TextLabel", {
+        Parent = frame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 12, 0, 2),
+        Size = UDim2.new(1, -24, 0, 14),
+        Font = Enum.Font.GothamBold,
+        Text = (config.Name or "Progress") .. ": " .. math.floor((value / max) * 100) .. "%",
+        TextColor3 = Settings.TextColor,
+        TextSize = 10,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 2,
+    })
+
+    local bg = Create("Frame", {
+        Parent = frame,
+        BackgroundColor3 = Settings.Surface2,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 12, 0, 20),
+        Size = UDim2.new(1, -24, 0, 10),
+        ZIndex = 2,
+    })
+    AddCorner(bg, 5)
+
+    local fill = Create("Frame", {
+        Parent = bg,
+        BackgroundColor3 = config.Color or Settings.AccentGlow,
+        BorderSizePixel = 0,
+        Size = UDim2.new(value / max, 0, 1, 0),
+        ZIndex = 3,
+    })
+    AddCorner(fill, 5)
+
+    return {
+        Set = function(v)
+            value = math.clamp(v, 0, max)
+            Tween(fill, {Size = UDim2.new(value / max, 0, 1, 0)}, 0.22)
+            label.Text = (config.Name or "Progress") .. ": " .. math.floor((value / max) * 100) .. "%"
+        end,
+        Get = function() return value end,
+        Value = value,
+    }
 end
 
 -- =====================================================================
