@@ -1,523 +1,119 @@
-# 🌟 Nebula UI Library v3.0
+# 🌌 Nebula UI
 
-A modern, customizable Roblox UI Library with a glossy purple theme, smooth animations, notifications, loading screens, and many built-in UI components.
+A modern, customizable, and lightweight **Roblox UI Library** designed for performance, flexibility, and beautiful interfaces.
+
+Nebula UI offers a clean API, smooth animations, and powerful components that make creating professional Roblox UIs simple.
 
 ---
 
 ## ✨ Features
 
-- 🎨 Multiple Themes (Amethyst, Dark, Light)
-- 🌟 Glossy Modern Design
-- 📂 Tab System
-- 📦 Sections
-- 🔘 Toggle
-- 🔲 Button
-- 🎚 Slider
-- 📋 Dropdown
-- 📝 Label
-- ⌨ TextBox
-- 🔑 Keybind
-- ☑ Checkbox
-- 🎨 RGB Color Picker
-- 📊 Progress Bar
+- 🎨 Modern glossy interface
+- ⚡ Smooth animations
+- 📂 Tabs & Sections
+- 🔘 Buttons
+- ✅ Toggles
+- 🎚️ Sliders
+- 📜 Dropdowns
+- 📝 Textboxes
+- 🌈 Color Picker
+- ⌨️ Keybinds
 - 🔔 Notifications
-- ⏳ Loading Screen
-- 💾 Config System
-- 🎬 Smooth Tween Animations
-- 🖱 Draggable Window
+- 💾 Configuration Saving
+- 📱 Responsive layout
+- 🚀 Lightweight & optimized
+- 🔧 Easy customization
 
 ---
 
-# 📥 Installation
+## 📖 Documentation
 
-Load the library.
+Visit the official documentation for installation guides, API reference, and examples.
 
-```lua
-local Nebula = loadstring(game:HttpGet("https://github.com/lzhenweiDev/Nebula-UI/raw/refs/heads/main/V3.lua"))()
-```
+➡️ **https://lzhenweidev.github.io/Nebula-UI/docs**
 
 ---
 
-# 🚀 Creating a Window
+## 🚀 Getting Started
 
 ```lua
-local Window = Nebula.CreateWindow({
-    Title = "Nebula Demo",
-    ConfigName = "MyConfig",
+local Nebula = loadstring(game:HttpGet("YOUR_SCRIPT_URL"))()
 
-    ShowLoading = true,
-
-    LoadingDuration = 3,
-
-    LoadingSteps = {
-        "Loading...",
-        "Creating UI...",
-        "Almost Done...",
-        "Ready!"
+local Window = Nebula:CreateWindow({
+    Title = "Nebula UI",
+    LoadingTitle = "Nebula UI",
+    LoadingSubtitle = "Loading...",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "Nebula",
+        FileName = "Config"
     }
 })
 ```
 
----
-
-# 📁 Creating Tabs
-
-```lua
-local MainTab = Window:CreateTab("Main", "🏠")
-local SettingsTab = Window:CreateTab("Settings", "⚙")
-```
-
-Parameters:
-
-| Parameter | Description |
-|-----------|-------------|
-| Name | Tab name |
-| Icon | Emoji or icon |
+More examples are available in the documentation.
 
 ---
 
-# 📦 Creating Sections
+## 📚 Documentation Includes
 
-```lua
-local Main = Nebula.CreateSection(MainTab,{
-    Name = "Main Features"
-})
-```
-
-Or without a title:
-
-```lua
-local Main = Nebula.CreateSection(MainTab)
-```
-
----
-
-# 🔘 Button
-
-```lua
-Main:CreateButton({
-    Name = "Click Me",
-
-    Callback = function()
-        print("Clicked!")
-    end
-})
-```
-
-Optional:
-
-```lua
-Color = Color3.fromRGB(255,0,0)
-```
+- Installation
+- Quick Start
+- Window Creation
+- Tabs
+- Sections
+- Buttons
+- Toggles
+- Sliders
+- Dropdowns
+- Textboxes
+- Color Picker
+- Keybinds
+- Notifications
+- Configuration Saving
+- Themes
+- API Reference
+- Examples
 
 ---
 
-# ☑ Toggle
+## 💡 Why Nebula UI?
 
-```lua
-local Toggle = Main:CreateToggle({
+Nebula UI is built to provide developers with a simple yet powerful interface library that combines performance, customization, and modern design.
 
-    Name = "Auto Farm",
-
-    Default = false,
-
-    Callback = function(Value)
-        print(Value)
-    end
-
-})
-```
-
-Functions
-
-```lua
-Toggle:Set(true)
-
-print(Toggle:Get())
-```
-
-Events
-
-```lua
-Toggle.Events.OnChanged:Connect(function(Value)
-
-end)
-```
+Whether you're building small utilities or large projects, Nebula UI helps you create polished interfaces with minimal code.
 
 ---
 
-# 🎚 Slider
+## 🤝 Contributing
 
-```lua
-local Slider = Main:CreateSlider({
+Contributions, feature requests, and bug reports are welcome.
 
-    Name = "WalkSpeed",
-
-    Min = 16,
-
-    Max = 100,
-
-    Default = 16,
-
-    Suffix = " Studs",
-
-    Callback = function(Value)
-
-    end
-
-})
-```
-
-Functions
-
-```lua
-Slider:Set(50)
-
-print(Slider:Get())
-```
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Open a Pull Request.
 
 ---
 
-# 📋 Dropdown
+## ⭐ Support
 
-```lua
-local Dropdown = Main:CreateDropdown({
+If you enjoy using Nebula UI, please consider giving the repository a **Star ⭐**.
 
-    Name = "Select Team",
-
-    Options = {
-        "Red",
-        "Blue",
-        "Green"
-    },
-
-    Default = "Red",
-
-    Callback = function(Value)
-
-    end
-
-})
-```
-
-Refresh Options
-
-```lua
-Dropdown:Refresh({
-    "Option 1",
-    "Option 2",
-    "Option 3"
-})
-```
-
-Set Value
-
-```lua
-Dropdown:Set("Blue")
-```
+Your support helps the project grow and motivates future updates.
 
 ---
 
-# 📝 Label
+## 📄 License
 
-```lua
-Main:CreateLabel({
+This project is licensed under the **MIT License**.
 
-    Text = "Hello World"
+## 📖 Documentation
 
-})
-```
+Read the full documentation, API reference, and examples here:
 
-Optional
+**➡️ [Go to the Documentation](https://lzhenweidev.github.io/Nebula-UI/docs)**
 
-```lua
-Color = Color3.fromRGB(255,255,255)
+or simply:
 
-Size = 14
-```
-
----
-
-# ⌨ TextBox
-
-```lua
-local Box = Main:CreateTextBox({
-
-    Placeholder = "Type here...",
-
-    Default = "",
-
-    Callback = function(Text)
-
-    end
-
-})
-```
-
-Functions
-
-```lua
-Box:Set("Hello")
-
-print(Box:Get())
-```
-
-Events
-
-```lua
-Box.Events.OnChanged:Connect(function(Text)
-
-end)
-```
-
----
-
-# 🔑 Keybind
-
-```lua
-local Keybind = Main:CreateKeybind({
-
-    Name = "Open UI",
-
-    Default = "RightShift",
-
-    Callback = function(Key)
-
-    end
-
-})
-```
-
-Functions
-
-```lua
-Keybind:Set("F")
-
-print(Keybind:Get())
-```
-
----
-
-# ☑ Checkbox
-
-```lua
-local Checkbox = Main:CreateCheckbox({
-
-    Name = "ESP",
-
-    Default = false,
-
-    Callback = function(Value)
-
-    end
-
-})
-```
-
-Functions
-
-```lua
-Checkbox:Set(true)
-
-print(Checkbox:Get())
-```
-
----
-
-# 🎨 Color Picker
-
-```lua
-local Picker = Main:CreateColorPicker({
-
-    Name = "Accent",
-
-    Default = Color3.fromRGB(140,80,255),
-
-    Callback = function(Color)
-
-    end
-
-})
-```
-
-Functions
-
-```lua
-Picker:Set(Color3.fromRGB(255,0,0))
-
-print(Picker:Get())
-```
-
----
-
-# 📊 Progress Bar
-
-```lua
-local Progress = Main:CreateProgressBar({
-
-    Name = "Loading",
-
-    Value = 30,
-
-    Max = 100
-
-})
-```
-
-Update
-
-```lua
-Progress:Set(75)
-```
-
----
-
-# 🔔 Notifications
-
-```lua
-Window:Notify({
-
-    Title = "Success",
-
-    Content = "Everything loaded!",
-
-    Type = "success",
-
-    Duration = 5,
-
-    Icon = "✅"
-
-})
-```
-
-Notification Types
-
-- info
-- success
-- warning
-- error
-
----
-
-# 📂 Config System
-
-Save
-
-```lua
-ConfigManager:Save("MyConfig",Data)
-```
-
-Load
-
-```lua
-ConfigManager:Load("MyConfig")
-```
-
-Delete
-
-```lua
-ConfigManager:Delete("MyConfig")
-```
-
----
-
-# 🎨 Themes
-
-Built-in Themes
-
-- Amethyst
-- Dark
-- Light
-
-Current default:
-
-```lua
-Amethyst
-```
-
----
-
-# 🛠 Window Functions
-
-Destroy
-
-```lua
-Window:Destroy()
-```
-
-Minimize
-
-```lua
-Window:Minimize()
-```
-
-Notification
-
-```lua
-Window:Notify({...})
-```
-
----
-
-# 📚 Complete Example
-
-```lua
-local Nebula = loadstring(game:HttpGet("https://github.com/lzhenweiDev/Nebula-UI/raw/refs/heads/main/V2.lua"))()
-
-local Window = Nebula.CreateWindow({
-    Title = "Nebula Demo",
-    ConfigName = "Example"
-})
-
-local MainTab = Window:CreateTab("Main","🏠")
-
-local Main = Nebula.CreateSection(MainTab,{
-    Name = "Example"
-})
-
-Main:CreateButton({
-    Name = "Hello",
-    Callback = function()
-        print("Hello!")
-    end
-})
-
-Main:CreateToggle({
-    Name = "Toggle",
-    Callback = function(Value)
-        print(Value)
-    end
-})
-
-Main:CreateSlider({
-    Name = "Speed",
-    Min = 0,
-    Max = 100,
-    Default = 50,
-    Callback = function(Value)
-        print(Value)
-    end
-})
-
-Window:Notify({
-    Title = "Nebula",
-    Content = "Library Loaded!",
-    Type = "success"
-})
-```
-
----
-
-# 📄 License
-
-This project is free to use and modify. Use source.lua for modifying.
-
-**Nebula V3 is currently the latest version which isn't for modifying**
-
-Please keep credits if you redistribute the library.
-
----
-
-# ⭐ Nebula UI v3.0
-
-Made with ❤️ for the Roblox scripting community.
+https://lzhenweidev.github.io/Nebula-UI/docs
